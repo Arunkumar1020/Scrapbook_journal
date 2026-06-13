@@ -1,80 +1,115 @@
-import { journals } from "../data/journals";
+import {
+  getAllJournals,
+  getJournalByIdDb,
+  createJournalDb,
+  updateJournalDb,
+  deleteJournalDb,
+} from "../services/journalService";
 
-export async function getJournals() {
+export async function getJournals(env) {
+  const journals = await getAllJournals(env);
+
   return Response.json(journals);
 }
 
-export async function getJournalById(id) {
-  const journal = journals.find(
-    (journal) => journal.id === id
-  );
+export async function getJournalById(
+  env,
+  id
+) {
+  const journal =
+    await getJournalByIdDb(env, id);
 
   if (!journal) {
     return Response.json(
-      { message: "Journal not found" },
-      { status: 404 }
+      {
+        message: "Journal not found",
+      },
+      {
+        status: 404,
+      }
     );
   }
 
   return Response.json(journal);
 }
 
-export async function createJournal(request) {
-  const body = await request.json();
+export async function createJournal(
+  env,
+  request
+) {
+  const body =
+    await request.json();
 
-  const journal = {
-    id: Date.now().toString(),
-    title: body.title,
-    description: body.description,
-    imageUrl: body.imageUrl || "",
-    createdAt: new Date().toISOString(),
-  };
+  const journal =
+    await createJournalDb(
+      env,
+      body.title,
+      body.content,
+      body.mood
+    );
 
-  journals.push(journal);
-
-  return Response.json(journal, {
-    status: 201,
-  });
-}
-
-export async function updateJournal(id, request) {
-  const body = await request.json();
-
-  const journal = journals.find(
-    (journal) => journal.id === id
+  return Response.json(
+    journal,
+    {
+      status: 201,
+    }
   );
+}
+export async function updateJournal(
+  env,
+  id,
+  request
+) {
+  const body =
+    await request.json();
+
+  const journal =
+    await updateJournalDb(
+      env,
+      id,
+      body.title,
+      body.content,
+      body.mood
+    );
 
   if (!journal) {
     return Response.json(
-      { message: "Journal not found" },
-      { status: 404 }
+      {
+        message:
+          "Journal not found",
+      },
+      {
+        status: 404,
+      }
     );
   }
-
-  journal.title =
-    body.title ?? journal.title;
-
-  journal.description =
-    body.description ?? journal.description;
 
   return Response.json(journal);
 }
+export async function deleteJournal(
+  env,
+  id
+) {
+  const journal =
+    await deleteJournalDb(
+      env,
+      id
+    );
 
-export async function deleteJournal(id) {
-  const index = journals.findIndex(
-    (journal) => journal.id === id
-  );
-
-  if (index === -1) {
+  if (!journal) {
     return Response.json(
-      { message: "Journal not found" },
-      { status: 404 }
+      {
+        message:
+          "Journal not found",
+      },
+      {
+        status: 404,
+      }
     );
   }
-
-  journals.splice(index, 1);
 
   return Response.json({
-    message: "Journal deleted",
+    message:
+      "Journal deleted",
   });
 }
