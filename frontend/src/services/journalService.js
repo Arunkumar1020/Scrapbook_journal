@@ -1,8 +1,20 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+function getAuthHeaders() {
+  const token = localStorage.getItem("token");
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
 export async function getAllJournals() {
   const response = await fetch(
-    `${API_BASE_URL}/api/journals`
+    `${API_BASE_URL}/api/journals`,
+    {
+      headers: getAuthHeaders(),
+    }
   );
 
   if (!response.ok) {
@@ -17,9 +29,7 @@ export async function createJournal(journalData) {
     `${API_BASE_URL}/api/journals`,
     {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(journalData),
     }
   );
@@ -33,7 +43,10 @@ export async function createJournal(journalData) {
 
 export async function getJournalById(id) {
   const response = await fetch(
-    `${API_BASE_URL}/api/journals/${id}`
+    `${API_BASE_URL}/api/journals/${id}`,
+    {
+      headers: getAuthHeaders(),
+    }
   );
 
   if (!response.ok) {
@@ -48,9 +61,7 @@ export async function updateJournal(id, journalData) {
     `${API_BASE_URL}/api/journals/${id}`,
     {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: getAuthHeaders(),
       body: JSON.stringify(journalData),
     }
   );
@@ -67,11 +78,13 @@ export async function deleteJournal(id) {
     `${API_BASE_URL}/api/journals/${id}`,
     {
       method: "DELETE",
+      headers: getAuthHeaders(),
     }
   );
 
   if (!response.ok) {
     const errorText = await response.text();
+
     throw new Error(
       errorText || "Failed to delete journal"
     );

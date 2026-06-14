@@ -1,10 +1,21 @@
-import { Outlet, Link, NavLink } from "react-router-dom";
+import { Outlet, Link, NavLink, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 function UserLayout() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
   const navClass = ({ isActive }) =>
     isActive
       ? "text-blue-600 font-semibold"
       : "text-slate-600 hover:text-blue-600";
+
+  function handleLogout() {
+    logout();
+    toast.success("Logged out successfully");
+    navigate("/login");
+  }
 
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
@@ -26,6 +37,19 @@ function UserLayout() {
             <NavLink to="/admin/journals" className={navClass}>
               Admin
             </NavLink>
+
+            {user && (
+              <span className="hidden text-slate-500 sm:inline">
+                Hi, {user.name}
+              </span>
+            )}
+
+            <button
+              onClick={handleLogout}
+              className="rounded-lg bg-red-50 px-3 py-2 font-medium text-red-600 hover:bg-red-100"
+            >
+              Logout
+            </button>
           </nav>
         </div>
       </header>

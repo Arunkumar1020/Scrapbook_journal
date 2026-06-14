@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import UserLayout from "../layouts/UserLayout";
 import AdminLayout from "../layouts/AdminLayout";
@@ -10,19 +10,68 @@ import JournalDetails from "../pages/user/JournalDetails";
 
 import JournalManagement from "../pages/admin/JournalManagement";
 
+import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
+
+import ProtectedRoute from "../components/auth/ProtectedRoute";
+
 function AppRoutes() {
   return (
     <Routes>
-      <Route element={<UserLayout />}>
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+
+      <Route
+        path="/register"
+        element={<Register />}
+      />
+
+      {/* Protected User Routes */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <UserLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route path="/" element={<Dashboard />} />
-        <Route path="/journals/create" element={<CreateJournal />} />
-        <Route path="/journals/edit/:id" element={<EditJournal />} />
-        <Route path="/journals/:id" element={<JournalDetails />} />
+
+        <Route
+          path="/journals/create"
+          element={<CreateJournal />}
+        />
+
+        <Route
+          path="/journals/edit/:id"
+          element={<EditJournal />}
+        />
+
+        <Route
+          path="/journals/:id"
+          element={<JournalDetails />}
+        />
       </Route>
 
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route path="journals" element={<JournalManagement />} />
+      {/* Protected Admin Routes */}
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute>
+            <AdminLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path="journals"
+          element={<JournalManagement />}
+        />
       </Route>
+
+      {/* Fallback */}
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
     </Routes>
   );
 }

@@ -34,10 +34,15 @@ function CreateJournal() {
     const formData = new FormData();
     formData.append("image", imageFile);
 
-    const response = await fetch(`${API_URL}/upload`, {
-      method: "POST",
-      body: formData,
-    });
+   const token = localStorage.getItem("token");
+
+const response = await fetch(`${API_URL}/upload`, {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  body: formData,
+});
 
     const data = await response.json();
 
