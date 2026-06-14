@@ -12,12 +12,8 @@ export async function getJournals(env) {
   return Response.json(journals);
 }
 
-export async function getJournalById(
-  env,
-  id
-) {
-  const journal =
-    await getJournalByIdDb(env, id);
+export async function getJournalById(env, id) {
+  const journal = await getJournalByIdDb(env, id);
 
   if (!journal) {
     return Response.json(
@@ -33,50 +29,38 @@ export async function getJournalById(
   return Response.json(journal);
 }
 
-export async function createJournal(
-  env,
-  request
-) {
-  const body =
-    await request.json();
+export async function createJournal(env, request) {
+  const body = await request.json();
 
-  const journal =
-    await createJournalDb(
-      env,
-      body.title,
-      body.content,
-      body.mood
-    );
-
-  return Response.json(
-    journal,
-    {
-      status: 201,
-    }
+  const journal = await createJournalDb(
+    env,
+    body.title,
+    body.content,
+    body.mood,
+    body.image_url || ""
   );
-}
-export async function updateJournal(
-  env,
-  id,
-  request
-) {
-  const body =
-    await request.json();
 
-  const journal =
-    await updateJournalDb(
-      env,
-      id,
-      body.title,
-      body.content,
-      body.mood
-    );
+  return Response.json(journal, {
+    status: 201,
+  });
+}
+
+export async function updateJournal(env, id, request) {
+  const body = await request.json();
+
+  const journal = await updateJournalDb(
+    env,
+    id,
+    body.title,
+    body.content,
+    body.mood,
+    body.image_url || ""
+  );
 
   if (!journal) {
     return Response.json(
       {
-        message:
-          "Journal not found",
+        message: "Journal not found",
       },
       {
         status: 404,
@@ -86,21 +70,14 @@ export async function updateJournal(
 
   return Response.json(journal);
 }
-export async function deleteJournal(
-  env,
-  id
-) {
-  const journal =
-    await deleteJournalDb(
-      env,
-      id
-    );
 
-  if (!journal) {
+export async function deleteJournal(env, id) {
+  const deletedJournal = await deleteJournalDb(env, id);
+
+  if (!deletedJournal) {
     return Response.json(
       {
-        message:
-          "Journal not found",
+        message: "Journal not found",
       },
       {
         status: 404,
@@ -109,7 +86,8 @@ export async function deleteJournal(
   }
 
   return Response.json({
-    message:
-      "Journal deleted",
+    success: true,
+    message: "Journal deleted successfully",
+    deletedJournal,
   });
 }

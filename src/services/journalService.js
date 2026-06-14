@@ -26,7 +26,8 @@ export async function createJournalDb(
   env,
   title,
   content,
-  mood
+  mood,
+  image_url
 ) {
   const sql = getDb(env);
 
@@ -35,25 +36,29 @@ export async function createJournalDb(
     (
       title,
       content,
-      mood
+      mood,
+      image_url
     )
     VALUES
     (
       ${title},
       ${content},
-      ${mood}
+      ${mood},
+      ${image_url}
     )
     RETURNING *
   `;
 
   return result[0];
 }
+
 export async function updateJournalDb(
   env,
   id,
   title,
   content,
-  mood
+  mood,
+  image_url
 ) {
   const sql = getDb(env);
 
@@ -62,7 +67,8 @@ export async function updateJournalDb(
     SET
       title = ${title},
       content = ${content},
-      mood = ${mood}
+      mood = ${mood},
+      image_url = ${image_url}
     WHERE id = ${id}
     RETURNING *
   `;
