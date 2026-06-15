@@ -33,10 +33,11 @@ function UserLayout() {
             <NavLink to="/journals/create" className={navClass}>
               Create
             </NavLink>
-
-            <NavLink to="/admin/journals" className={navClass}>
-              Admin
-            </NavLink>
+{user?.role === "admin" && (
+  <NavLink to="/admin/journals" className={navClass}>
+    Admin
+  </NavLink>
+)}
 
             {user && (
               <span className="hidden text-slate-500 sm:inline">

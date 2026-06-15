@@ -14,7 +14,7 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
-
+import AdminRoute from "../components/auth/AdminRoute";
 function AppRoutes() {
   return (
     <Routes>
@@ -57,7 +57,9 @@ function AppRoutes() {
         path="/admin"
         element={
           <ProtectedRoute>
-            <AdminLayout />
+            <AdminRoute>
+        <AdminLayout />
+      </AdminRoute>
           </ProtectedRoute>
         }
       >
