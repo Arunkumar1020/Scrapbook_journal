@@ -5,6 +5,8 @@ import {
   getAdminStats,
   getAdminUsers,
   getAdminJournals,
+  updateAdminUserRole,
+  deleteAdminUser,
 } from "../../services/adminService";
 
 function JournalManagement() {
@@ -12,6 +14,7 @@ function JournalManagement() {
   const [users, setUsers] = useState([]);
   const [journals, setJournals] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
 
   useEffect(() => {
     loadAdminData();
@@ -34,6 +37,42 @@ function JournalManagement() {
       toast.error("Failed to load admin dashboard");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleRoleChange(userId, role) {
+    setActionLoadingId(userId);
+
+    try {
+      await updateAdminUserRole(userId, role);
+      toast.success(`User role changed to ${role}`);
+      await loadAdminData();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update user role");
+    } finally {
+      setActionLoadingId(null);
+    }
+  }
+
+  async function handleDeleteUser(userId) {
+    const confirmDelete = window.confirm(
+      "Delete this user and all their journals?"
+    );
+
+    if (!confirmDelete) return;
+
+    setActionLoadingId(userId);
+
+    try {
+      await deleteAdminUser(userId);
+      toast.success("User deleted successfully");
+      await loadAdminData();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete user");
+    } finally {
+      setActionLoadingId(null);
     }
   }
 
@@ -94,6 +133,7 @@ function JournalManagement() {
                 <th className="py-3 pr-4">Role</th>
                 <th className="py-3 pr-4">Journals</th>
                 <th className="py-3 pr-4">Created</th>
+                <th className="py-3 pr-4">Actions</th>
               </tr>
             </thead>
 
@@ -106,19 +146,63 @@ function JournalManagement() {
                   <td className="py-3 pr-4 font-medium text-slate-800">
                     {user.name}
                   </td>
+
                   <td className="py-3 pr-4 text-slate-600">
                     {user.email}
                   </td>
+
                   <td className="py-3 pr-4">
-                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
+                    <span
+                      className={
+                        user.role === "admin"
+                          ? "rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700"
+                          : "rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"
+                      }
+                    >
                       {user.role}
                     </span>
                   </td>
+
                   <td className="py-3 pr-4 text-slate-600">
                     {user.journal_count}
                   </td>
+
                   <td className="py-3 pr-4 text-slate-500">
                     {new Date(user.created_at).toLocaleDateString()}
+                  </td>
+
+                  <td className="py-3 pr-4">
+                    <div className="flex flex-wrap gap-2">
+                      {user.role === "admin" ? (
+                        <button
+                          disabled={actionLoadingId === user.id}
+                          onClick={() =>
+                            handleRoleChange(user.id, "user")
+                          }
+                          className="rounded-lg bg-yellow-50 px-3 py-2 text-xs font-semibold text-yellow-700 hover:bg-yellow-100 disabled:opacity-50"
+                        >
+                          Demote
+                        </button>
+                      ) : (
+                        <button
+                          disabled={actionLoadingId === user.id}
+                          onClick={() =>
+                            handleRoleChange(user.id, "admin")
+                          }
+                          className="rounded-lg bg-green-50 px-3 py-2 text-xs font-semibold text-green-700 hover:bg-green-100 disabled:opacity-50"
+                        >
+                          Promote
+                        </button>
+                      )}
+
+                      <button
+                        disabled={actionLoadingId === user.id}
+                        onClick={() => handleDeleteUser(user.id)}
+                        className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

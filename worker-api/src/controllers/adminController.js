@@ -2,6 +2,8 @@ import {
   getAdminStats,
   getAdminUsers,
   getAdminJournals,
+  updateUserRole,
+  deleteUser,
 } from "../services/adminService";
 
 import { getAuthenticatedUser } from "../middleware/authMiddleware";
@@ -37,4 +39,79 @@ export async function adminJournals(env, request) {
   const journals = await getAdminJournals(env);
 
   return Response.json(journals);
+}
+export async function changeUserRole(
+  env,
+  request,
+  userId
+) {
+  const admin = await getAuthenticatedUser(
+    request
+  );
+
+  checkAdmin(admin);
+
+  const { role } = await request.json();
+
+  if (
+    role !== "admin" &&
+    role !== "user"
+  ) {
+    return Response.json(
+      {
+        success: false,
+        message: "Invalid role",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  const updatedUser =
+    await updateUserRole(
+      env,
+      userId,
+      role
+    );
+
+  return Response.json({
+    success: true,
+    user: updatedUser,
+  });
+}
+
+export async function removeUser(
+  env,
+  request,
+  userId
+) {
+  const admin = await getAuthenticatedUser(
+    request
+  );
+
+  checkAdmin(admin);
+
+  if (
+    Number(userId) === Number(admin.id)
+  ) {
+    return Response.json(
+      {
+        success: false,
+        message:
+          "You cannot delete yourself",
+      },
+      {
+        status: 400,
+      }
+    );
+  }
+
+  const deletedUser =
+    await deleteUser(env, userId);
+
+  return Response.json({
+    success: true,
+    user: deletedUser,
+  });
 }

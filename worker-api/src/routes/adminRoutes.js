@@ -2,6 +2,8 @@ import {
   adminStats,
   adminUsers,
   adminJournals,
+  changeUserRole,
+  removeUser,
 } from "../controllers/adminController";
 
 export async function handleAdminRoutes(request, env) {
@@ -27,6 +29,30 @@ export async function handleAdminRoutes(request, env) {
   ) {
     return adminJournals(env, request);
   }
+  const userMatch = url.pathname.match(
+  /^\/api\/admin\/users\/([^/]+)$/
+);
 
+if (
+  request.method === "PUT" &&
+  userMatch
+) {
+  return changeUserRole(
+    env,
+    request,
+    Number(userMatch[1])
+  );
+}
+
+if (
+  request.method === "DELETE" &&
+  userMatch
+) {
+  return removeUser(
+    env,
+    request,
+    Number(userMatch[1])
+  );
+}
   return null;
 }

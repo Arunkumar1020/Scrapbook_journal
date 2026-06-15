@@ -60,3 +60,39 @@ export async function getAdminJournals(env) {
     ORDER BY journals.created_at DESC
   `;
 }
+export async function updateUserRole(
+  env,
+  userId,
+  role
+) {
+  const sql = getDb(env);
+
+  const result = await sql`
+    UPDATE users
+    SET role = ${role}
+    WHERE id = ${userId}
+    RETURNING *
+  `;
+
+  return result[0];
+}
+
+export async function deleteUser(
+  env,
+  userId
+) {
+  const sql = getDb(env);
+
+  await sql`
+    DELETE FROM journals
+    WHERE user_id = ${userId}
+  `;
+
+  const result = await sql`
+    DELETE FROM users
+    WHERE id = ${userId}
+    RETURNING *
+  `;
+
+  return result[0];
+}
