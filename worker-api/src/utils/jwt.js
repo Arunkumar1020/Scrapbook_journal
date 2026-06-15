@@ -8,6 +8,7 @@ export async function generateToken(user) {
   return await new SignJWT({
     id: user.id,
     email: user.email,
+    role: user.role || "user",
   })
     .setProtectedHeader({
       alg: "HS256",
