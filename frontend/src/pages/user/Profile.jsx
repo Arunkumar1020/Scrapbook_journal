@@ -260,7 +260,19 @@ function Profile() {
         >
           Download My Data
         </button>
-
+        
+      </div>
+<Link
+  to="/incident-response"
+  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
+>
+  View Incident Response Plan
+</Link><Link
+  to="/security"
+  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
+>
+  View Security Policy
+</Link>
         <Link
           to="/privacy"
           className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
@@ -273,8 +285,6 @@ function Profile() {
 >
   View Data Retention Policy
 </Link>
-      </div>
-
       <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 p-6">
         <h2 className="text-xl font-bold text-red-700">
           Danger Zone

@@ -17,6 +17,8 @@ import ProtectedRoute from "../components/auth/ProtectedRoute";
 import AdminRoute from "../components/auth/AdminRoute";
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
 import DataRetentionPolicy from "../pages/legal/DataRetentionPolicy";
+import IncidentResponsePlan from "../pages/legal/IncidentResponsePlan";
+import SecurityPolicy from "../pages/legal/SecurityPolicy";
 function AppRoutes() {
   return (
     <Routes>
@@ -29,6 +31,8 @@ function AppRoutes() {
       />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/data-retention" element={<DataRetentionPolicy />} />
+      <Route path="/incident-response" element={<IncidentResponsePlan />} />
+      <Route path="/security" element={<SecurityPolicy />} />
       {/* Protected User Routes */}
       <Route
         element={

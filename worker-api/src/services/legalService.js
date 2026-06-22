@@ -117,3 +117,153 @@ export function getDataRetentionPolicyData() {
       "This retention policy is part of the technical implementation and should be reviewed by a legal professional before production business use.",
   };
 }
+export function getIncidentResponsePlanData() {
+  return {
+    version: "1.0",
+    effective_date: "2026-06-22",
+    app_name: "ScrapBook Journal Tracker",
+    purpose:
+      "This Incident Response Plan defines how ScrapBook identifies, handles, investigates, and responds to security or privacy incidents.",
+    severity_levels: [
+      {
+        level: "Low",
+        description:
+          "Minor issue with no user data exposure, such as temporary UI errors or non-sensitive logs.",
+        response_time: "Within 72 hours",
+      },
+      {
+        level: "Medium",
+        description:
+          "Limited security issue affecting a small number of users or non-critical systems.",
+        response_time: "Within 24 hours",
+      },
+      {
+        level: "High",
+        description:
+          "Confirmed unauthorized access, failed security controls, or possible personal data exposure.",
+        response_time: "Immediately",
+      },
+      {
+        level: "Critical",
+        description:
+          "Large-scale data breach, credential compromise, service abuse, or major system compromise.",
+        response_time: "Immediate emergency response",
+      },
+    ],
+    response_steps: [
+      {
+        step: "Detect",
+        detail:
+          "Monitor audit logs, failed logins, MFA failures, account deletions, and unusual admin activity.",
+      },
+      {
+        step: "Contain",
+        detail:
+          "Restrict affected accounts, rotate secrets, disable suspicious access, and prevent further exposure.",
+      },
+      {
+        step: "Investigate",
+        detail:
+          "Review audit logs, affected users, timestamps, IP-related metadata if available, and impacted data.",
+      },
+      {
+        step: "Remediate",
+        detail:
+          "Patch the issue, update access controls, rotate credentials, and clean affected resources.",
+      },
+      {
+        step: "Notify",
+        detail:
+          "Notify affected users or stakeholders when required by privacy, security, or business obligations.",
+      },
+      {
+        step: "Review",
+        detail:
+          "Document the incident, improve controls, and update the security monitoring process.",
+      },
+    ],
+    current_controls: [
+      "JWT authentication",
+      "Cloudflare Worker secrets",
+      "Role-based access control",
+      "MFA support",
+      "Audit logs",
+      "Failed login tracking",
+      "Data export logging",
+      "Account deletion logging",
+      "Admin activity logging",
+      "R2 image cleanup on deletion",
+    ],
+    contact_email: "support@scrapbook.app",
+    note:
+      "This incident response plan is a technical project document and should be reviewed by a legal/security professional before production business use.",
+  };
+}
+export function getSecurityPolicyData() {
+  return {
+    version: "1.0",
+    effective_date: "2026-06-22",
+    app_name: "ScrapBook Journal Tracker",
+    purpose:
+      "This Security Policy explains the technical and operational safeguards used to protect ScrapBook accounts, journals, images, and administrative activity.",
+    security_controls: [
+      {
+        title: "Authentication",
+        description:
+          "Users authenticate using email and password. Passwords are stored as password hashes, not plain text.",
+      },
+      {
+        title: "JWT Authorization",
+        description:
+          "Authenticated sessions use JWT tokens. The signing secret is stored securely as a Cloudflare Worker secret.",
+      },
+      {
+        title: "Multi-Factor Authentication",
+        description:
+          "Users can enable MFA using authenticator apps. MFA events are logged for security monitoring.",
+      },
+      {
+        title: "Role-Based Access Control",
+        description:
+          "Admin pages and APIs are protected using role-based access control. Normal users cannot access admin functionality.",
+      },
+      {
+        title: "Audit Logging",
+        description:
+          "Security and privacy events such as login, failed login, data export, consent changes, account deletion, and role changes are logged.",
+      },
+      {
+        title: "Secure File Storage",
+        description:
+          "Uploaded journal images are stored in Cloudflare R2 and cleaned up during account or user deletion.",
+      },
+      {
+        title: "Data Export and Deletion",
+        description:
+          "Users can export their data and permanently delete their account from the Profile & Privacy page.",
+      },
+      {
+        title: "HTTPS Transport",
+        description:
+          "Frontend and backend traffic is served through HTTPS-enabled deployment platforms.",
+      },
+    ],
+    admin_controls: [
+      "Admin dashboard access is restricted to users with the admin role.",
+      "Admins can review users, journals, audit logs, and security summaries.",
+      "Admins can promote, demote, or delete users.",
+      "Admin actions are logged for accountability.",
+    ],
+    recommendations: [
+      "Rotate secrets periodically.",
+      "Review failed login and MFA failure activity.",
+      "Keep dependencies updated.",
+      "Use strong passwords and enable MFA.",
+      "Review audit logs regularly.",
+      "Avoid sharing credentials or tokens.",
+    ],
+    contact_email: "support@scrapbook.app",
+    note:
+      "This security policy is a technical project document and should be reviewed before production business use.",
+  };
+}
