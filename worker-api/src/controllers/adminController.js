@@ -15,7 +15,7 @@ function checkAdmin(user) {
 }
 
 export async function adminStats(env, request) {
-  const user = await getAuthenticatedUser(request);
+  const user = await getAuthenticatedUser(request,env);
   checkAdmin(user);
 
   const stats = await getAdminStats(env);
@@ -24,7 +24,7 @@ export async function adminStats(env, request) {
 }
 
 export async function adminUsers(env, request) {
-  const user = await getAuthenticatedUser(request);
+  const user = await getAuthenticatedUser(request,env);
   checkAdmin(user);
 
   const users = await getAdminUsers(env);
@@ -33,7 +33,7 @@ export async function adminUsers(env, request) {
 }
 
 export async function adminJournals(env, request) {
-  const user = await getAuthenticatedUser(request);
+  const user = await getAuthenticatedUser(request,env);
   checkAdmin(user);
 
   const journals = await getAdminJournals(env);
@@ -46,7 +46,7 @@ export async function changeUserRole(
   userId
 ) {
   const admin = await getAuthenticatedUser(
-    request
+    request,env
   );
 
   checkAdmin(admin);
@@ -87,7 +87,7 @@ export async function removeUser(
   userId
 ) {
   const admin = await getAuthenticatedUser(
-    request
+    request,env
   );
 
   checkAdmin(admin);

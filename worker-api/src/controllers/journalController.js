@@ -9,35 +9,24 @@ import {
 import { getAuthenticatedUser } from "../middleware/authMiddleware";
 
 export async function getJournals(env, request) {
-  const user = await getAuthenticatedUser(request);
-
+  const user = await getAuthenticatedUser(request, env);
   const journals = await getAllJournals(env, user.id);
-
   return Response.json(journals);
 }
 
 export async function getJournalById(env, id, request) {
-  const user = await getAuthenticatedUser(request);
-
+  const user = await getAuthenticatedUser(request, env);
   const journal = await getJournalByIdDb(env, id, user.id);
 
   if (!journal) {
-    return Response.json(
-      {
-        message: "Journal not found",
-      },
-      {
-        status: 404,
-      }
-    );
+    return Response.json({ message: "Journal not found" }, { status: 404 });
   }
 
   return Response.json(journal);
 }
 
 export async function createJournal(env, request) {
-  const user = await getAuthenticatedUser(request);
-
+  const user = await getAuthenticatedUser(request, env);
   const body = await request.json();
 
   const journal = await createJournalDb(
@@ -49,14 +38,11 @@ export async function createJournal(env, request) {
     user.id
   );
 
-  return Response.json(journal, {
-    status: 201,
-  });
+  return Response.json(journal, { status: 201 });
 }
 
 export async function updateJournal(env, id, request) {
-  const user = await getAuthenticatedUser(request);
-
+  const user = await getAuthenticatedUser(request, env);
   const body = await request.json();
 
   const journal = await updateJournalDb(
@@ -70,33 +56,18 @@ export async function updateJournal(env, id, request) {
   );
 
   if (!journal) {
-    return Response.json(
-      {
-        message: "Journal not found",
-      },
-      {
-        status: 404,
-      }
-    );
+    return Response.json({ message: "Journal not found" }, { status: 404 });
   }
 
   return Response.json(journal);
 }
 
 export async function deleteJournal(env, id, request) {
-  const user = await getAuthenticatedUser(request);
-
+  const user = await getAuthenticatedUser(request, env);
   const deletedJournal = await deleteJournalDb(env, id, user.id);
 
   if (!deletedJournal) {
-    return Response.json(
-      {
-        message: "Journal not found",
-      },
-      {
-        status: 404,
-      }
-    );
+    return Response.json({ message: "Journal not found" }, { status: 404 });
   }
 
   return Response.json({

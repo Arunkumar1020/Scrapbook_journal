@@ -1,6 +1,6 @@
 import { verifyToken } from "../utils/jwt";
 
-export async function getAuthenticatedUser(request) {
+export async function getAuthenticatedUser(request, env) {
   const authHeader = request.headers.get("Authorization");
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -9,7 +9,7 @@ export async function getAuthenticatedUser(request) {
 
   const token = authHeader.replace("Bearer ", "");
 
-  const user = await verifyToken(token);
+  const user = await verifyToken(token, env);
 
   return user;
 }

@@ -1,10 +1,14 @@
 import { SignJWT, jwtVerify } from "jose";
 
-const secret = new TextEncoder().encode(
-  "super-secret-jwt-key"
-);
+function getSecret(env) {
+  if (!env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined");
+  }
 
-export async function generateToken(user) {
+  return new TextEncoder().encode(env.JWT_SECRET);
+}
+
+export async function generateToken(user, env) {
   return await new SignJWT({
     id: user.id,
     email: user.email,
@@ -15,14 +19,11 @@ export async function generateToken(user) {
     })
     .setIssuedAt()
     .setExpirationTime("7d")
-    .sign(secret);
+    .sign(getSecret(env));
 }
 
-export async function verifyToken(token) {
-  const { payload } = await jwtVerify(
-    token,
-    secret
-  );
+export async function verifyToken(token, env) {
+  const { payload } = await jwtVerify(token, getSecret(env));
 
   return payload;
 }

@@ -16,7 +16,10 @@ export async function register(env, request) {
       body.password
     );
 
-    const token = await generateToken(user);
+    const token = await generateToken(
+      user,
+      env
+    );
 
     return Response.json(
       {
@@ -51,16 +54,19 @@ export async function login(env, request) {
       body.password
     );
 
-    const token = await generateToken(user);
+    const token = await generateToken(
+      user,
+      env
+    );
 
     return Response.json({
       success: true,
-  user: {
-  id: user.id,
-  name: user.name,
-  email: user.email,
-  role: user.role,
-},
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
       token,
     });
   } catch (error) {
