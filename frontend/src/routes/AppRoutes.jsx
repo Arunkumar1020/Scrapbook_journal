@@ -7,7 +7,7 @@ import Dashboard from "../pages/user/Dashboard";
 import CreateJournal from "../pages/user/CreateJournal";
 import EditJournal from "../pages/user/EditJournal";
 import JournalDetails from "../pages/user/JournalDetails";
-
+import Profile from "../pages/user/Profile";
 import JournalManagement from "../pages/admin/JournalManagement";
 
 import Login from "../pages/auth/Login";
@@ -50,6 +50,8 @@ function AppRoutes() {
           path="/journals/:id"
           element={<JournalDetails />}
         />
+        <Route path="/profile" 
+        element={<Profile />} />
       </Route>
 
       {/* Protected Admin Routes */}
@@ -75,6 +77,7 @@ function AppRoutes() {
         element={<Navigate to="/" replace />}
       />
     </Routes>
+    
   );
 }
 

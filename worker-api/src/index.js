@@ -1,7 +1,9 @@
 import { randomUUID } from "crypto";
 import { getDb } from "./utils/db";
 import { handleJournalRoutes } from "./routes/journalRoutes";
-import { handleAuthRoutes } from "./routes/authRoutes";import { handleAdminRoutes } from "./routes/adminRoutes";
+import { handleAuthRoutes } from "./routes/authRoutes";
+import { handleAdminRoutes } from "./routes/adminRoutes";
+import { handleUserRoutes } from "./routes/userRoutes";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -131,6 +133,7 @@ export default {
           })
         );
       }
+
       const authResponse = await handleAuthRoutes(request, env);
 
 if (authResponse) {
@@ -139,6 +142,11 @@ if (authResponse) {
 
 if (adminResponse) {
   return withCors(adminResponse);
+}
+const userResponse = await handleUserRoutes(request, env);
+
+if (userResponse) {
+  return withCors(userResponse);
 }
       const journalResponse = await handleJournalRoutes(request, env);
 

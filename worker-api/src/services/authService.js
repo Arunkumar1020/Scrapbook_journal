@@ -5,7 +5,8 @@ export async function registerUser(
   env,
   name,
   email,
-  password
+  password,
+  consentGiven
 ) {
   const sql = getDb(env);
 
@@ -16,8 +17,12 @@ export async function registerUser(
   `;
 
   if (existingUser.length > 0) {
+    throw new Error("Email already exists");
+  }
+
+  if (!consentGiven) {
     throw new Error(
-      "Email already exists"
+      "Consent is required to create an account"
     );
   }
 
@@ -29,18 +34,25 @@ export async function registerUser(
     (
       name,
       email,
-      password_hash
+      password_hash,
+      consent_given,
+      consent_given_at
     )
     VALUES
     (
       ${name},
       ${email},
-      ${passwordHash}
+      ${passwordHash},
+      ${consentGiven},
+      NOW()
     )
     RETURNING
       id,
       name,
       email,
+      role,
+      consent_given,
+      consent_given_at,
       created_at
   `;
 

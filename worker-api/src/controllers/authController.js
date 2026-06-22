@@ -13,7 +13,8 @@ export async function register(env, request) {
       env,
       body.name,
       body.email,
-      body.password
+      body.password,
+      body.consent_given
     );
 
     const token = await generateToken(
@@ -66,6 +67,7 @@ export async function login(env, request) {
         name: user.name,
         email: user.email,
         role: user.role,
+        consent_given: user.consent_given,
       },
       token,
     });

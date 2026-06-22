@@ -50,7 +50,9 @@ function UserLayout() {
             <NavLink to="/journals/create" className={navClass}>
               ✍️ Create Journal
             </NavLink>
-
+            <NavLink to="/profile" className={navClass}>
+            👤 Profile
+            </NavLink>
             {user?.role === "admin" && (
               <NavLink to="/admin/journals" className={navClass}>
                 🛡️ Admin Panel

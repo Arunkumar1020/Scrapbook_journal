@@ -41,3 +41,21 @@ export async function loginUser(credentials) {
 
   return data;
 }
+export async function exportMyData() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/me/export`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to export data");
+  }
+
+  return response.json();
+}
