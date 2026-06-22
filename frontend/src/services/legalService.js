@@ -11,3 +11,15 @@ export async function getPrivacyPolicy() {
 
   return response.json();
 }
+
+export async function getDataRetentionPolicy() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/legal/data-retention-policy`
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch data retention policy");
+  }
+
+  return response.json();
+}

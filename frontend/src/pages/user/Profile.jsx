@@ -267,6 +267,12 @@ function Profile() {
         >
           View Privacy Policy
         </Link>
+        <Link
+  to="/data-retention"
+  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
+>
+  View Data Retention Policy
+</Link>
       </div>
 
       <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 p-6">

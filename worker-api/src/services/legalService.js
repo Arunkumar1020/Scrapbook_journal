@@ -54,3 +54,66 @@ export function getPrivacyPolicyData() {
     ],
   };
 }
+
+export function getDataRetentionPolicyData() {
+  return {
+    version: "1.0",
+    effective_date: "2026-06-22",
+    app_name: "ScrapBook Journal Tracker",
+    retention_summary:
+      "ScrapBook stores user data only for as long as needed to provide the journal service, support security monitoring, and satisfy operational requirements.",
+    retention_rules: [
+      {
+        data_type: "User Account Data",
+        examples: "Name, email, role, consent status",
+        retention_period: "Until account deletion",
+        deletion_method:
+          "Removed from the users table when the user deletes the account or an admin deletes the user.",
+      },
+      {
+        data_type: "Journal Data",
+        examples: "Title, content, mood, created date",
+        retention_period: "Until journal or account deletion",
+        deletion_method:
+          "Removed from the journals table when the journal or account is deleted.",
+      },
+      {
+        data_type: "Uploaded Images",
+        examples: "Journal image files stored in Cloudflare R2",
+        retention_period: "Until journal or account deletion",
+        deletion_method:
+          "Deleted from the R2 bucket during journal, user, or account deletion cleanup.",
+      },
+      {
+        data_type: "Authentication Data",
+        examples: "Password hashes and JWT sessions",
+        retention_period: "Until account deletion or token expiry",
+        deletion_method:
+          "Password hash is removed with the user account. JWTs expire automatically.",
+      },
+      {
+        data_type: "Consent Records",
+        examples: "Consent status and consent timestamp",
+        retention_period: "Until account deletion",
+        deletion_method:
+          "Removed with the user account. Consent changes are also logged in audit logs.",
+      },
+      {
+        data_type: "Audit Logs",
+        examples:
+          "Login events, data export events, account deletion, role changes",
+        retention_period: "Recommended 180 days",
+        deletion_method:
+          "Can be cleaned up using scheduled retention cleanup in a future version.",
+      },
+    ],
+    user_rights: [
+      "Users can export their personal data from the Profile & Privacy page.",
+      "Users can delete their account from the Profile & Privacy page.",
+      "Users can manage consent from the Profile & Privacy page.",
+      "Admins can review audit logs for security and compliance monitoring.",
+    ],
+    note:
+      "This retention policy is part of the technical implementation and should be reviewed by a legal professional before production business use.",
+  };
+}

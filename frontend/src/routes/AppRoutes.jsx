@@ -16,6 +16,7 @@ import Register from "../pages/auth/Register";
 import ProtectedRoute from "../components/auth/ProtectedRoute";
 import AdminRoute from "../components/auth/AdminRoute";
 import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
+import DataRetentionPolicy from "../pages/legal/DataRetentionPolicy";
 function AppRoutes() {
   return (
     <Routes>
@@ -27,6 +28,7 @@ function AppRoutes() {
         element={<Register />}
       />
       <Route path="/privacy" element={<PrivacyPolicy />} />
+      <Route path="/data-retention" element={<DataRetentionPolicy />} />
       {/* Protected User Routes */}
       <Route
         element={
