@@ -4,6 +4,7 @@ import { handleJournalRoutes } from "./routes/journalRoutes";
 import { handleAuthRoutes } from "./routes/authRoutes";
 import { handleAdminRoutes } from "./routes/adminRoutes";
 import { handleUserRoutes } from "./routes/userRoutes";
+import { handleLegalRoutes } from "./routes/legalRoutes";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -133,7 +134,11 @@ export default {
           })
         );
       }
+      const legalResponse = await handleLegalRoutes(request);
 
+if (legalResponse) {
+  return withCors(legalResponse);
+}
       const authResponse = await handleAuthRoutes(request, env);
 
 if (authResponse) {

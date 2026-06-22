@@ -135,10 +135,13 @@ function Register() {
               I agree to the collection and processing of
               my account and journal data for providing
               ScrapBook services. I understand that I can
-              request data export or account deletion later.
+              request data export or account deletion later. <Link
+          to="/privacy"
+            className="font-bold text-red-600 hover:text-green-700">Privacy Policy
+          </Link>
             </span>
           </label>
-
+         
           <button
             type="submit"
             disabled={loading}
