@@ -45,6 +45,50 @@ export async function exportUserData(env, userId) {
   };
 }
 
+export async function getUserConsent(env, userId) {
+  const sql = getDb(env);
+
+  const result = await sql`
+    SELECT
+      id,
+      name,
+      email,
+      consent_given,
+      consent_given_at
+    FROM users
+    WHERE id = ${userId}
+  `;
+
+  return result[0];
+}
+
+export async function updateUserConsent(
+  env,
+  userId,
+  consentGiven
+) {
+  const sql = getDb(env);
+
+  const result = await sql`
+    UPDATE users
+    SET
+      consent_given = ${consentGiven},
+      consent_given_at = CASE
+        WHEN ${consentGiven} = true THEN NOW()
+        ELSE consent_given_at
+      END
+    WHERE id = ${userId}
+    RETURNING
+      id,
+      name,
+      email,
+      consent_given,
+      consent_given_at
+  `;
+
+  return result[0];
+}
+
 export async function deleteMyAccountData(env, userId) {
   const sql = getDb(env);
 

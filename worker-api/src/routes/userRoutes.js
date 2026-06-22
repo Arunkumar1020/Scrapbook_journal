@@ -1,6 +1,8 @@
 import {
   exportMyData,
   deleteMyAccount,
+  getMyConsent,
+  updateMyConsent,
 } from "../controllers/userController";
 
 export async function handleUserRoutes(request, env) {
@@ -11,6 +13,20 @@ export async function handleUserRoutes(request, env) {
     url.pathname === "/api/me/export"
   ) {
     return exportMyData(env, request);
+  }
+
+  if (
+    request.method === "GET" &&
+    url.pathname === "/api/me/consent"
+  ) {
+    return getMyConsent(env, request);
+  }
+
+  if (
+    request.method === "PUT" &&
+    url.pathname === "/api/me/consent"
+  ) {
+    return updateMyConsent(env, request);
   }
 
   if (

@@ -41,6 +41,7 @@ export async function loginUser(credentials) {
 
   return data;
 }
+
 export async function exportMyData() {
   const token = localStorage.getItem("token");
 
@@ -59,6 +60,52 @@ export async function exportMyData() {
 
   return response.json();
 }
+
+export async function getMyConsent() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/me/consent`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch consent");
+  }
+
+  return response.json();
+}
+
+export async function updateMyConsent(consentGiven) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/me/consent`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        consent_given: consentGiven,
+      }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update consent");
+  }
+
+  return data;
+}
+
 export async function deleteMyAccount() {
   const token = localStorage.getItem("token");
 
