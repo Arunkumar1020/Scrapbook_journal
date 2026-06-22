@@ -77,11 +77,33 @@ export async function updateUserRole(
   return result[0];
 }
 
-export async function deleteUser(
-  env,
-  userId
-) {
+function extractFileNameFromImageUrl(imageUrl) {
+  if (!imageUrl) {
+    return null;
+  }
+
+  const parts = imageUrl.split("/image/");
+  return parts[1] || null;
+}
+
+export async function deleteUser(env, userId) {
   const sql = getDb(env);
+
+  const journals = await sql`
+    SELECT image_url
+    FROM journals
+    WHERE user_id = ${userId}
+  `;
+
+  for (const journal of journals) {
+    const fileName = extractFileNameFromImageUrl(
+      journal.image_url
+    );
+
+    if (fileName) {
+      await env.IMAGES_BUCKET.delete(fileName);
+    }
+  }
 
   await sql`
     DELETE FROM journals

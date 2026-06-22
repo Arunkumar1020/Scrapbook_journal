@@ -4,8 +4,8 @@ import {
   adminJournals,
   changeUserRole,
   removeUser,
+  adminAuditLogs,
 } from "../controllers/adminController";
-
 export async function handleAdminRoutes(request, env) {
   const url = new URL(request.url);
 
@@ -53,6 +53,12 @@ if (
     request,
     Number(userMatch[1])
   );
+}
+if (
+  request.method === "GET" &&
+  url.pathname === "/api/admin/audit-logs"
+) {
+  return adminAuditLogs(env, request);
 }
   return null;
 }

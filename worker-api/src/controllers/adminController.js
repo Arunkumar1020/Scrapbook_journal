@@ -5,9 +5,9 @@ import {
   updateUserRole,
   deleteUser,
 } from "../services/adminService";
-
+import { createAuditLog } from "../services/auditService";
 import { getAuthenticatedUser } from "../middleware/authMiddleware";
-
+import { getRecentAuditLogs } from "../services/auditService";
 function checkAdmin(user) {
   if (user.role !== "admin") {
     throw new Error("Admin access required");
@@ -46,7 +46,8 @@ export async function changeUserRole(
   userId
 ) {
   const admin = await getAuthenticatedUser(
-    request,env
+    request,
+    env
   );
 
   checkAdmin(admin);
@@ -75,19 +76,30 @@ export async function changeUserRole(
       role
     );
 
+  await createAuditLog(env, {
+    actorUserId: admin.id,
+    action: "USER_ROLE_UPDATED",
+    targetType: "user",
+    targetId: userId,
+    metadata: {
+      new_role: role,
+      target_email: updatedUser.email,
+    },
+  });
+
   return Response.json({
     success: true,
     user: updatedUser,
   });
 }
-
 export async function removeUser(
   env,
   request,
   userId
 ) {
   const admin = await getAuthenticatedUser(
-    request,env
+    request,
+    env
   );
 
   checkAdmin(admin);
@@ -110,8 +122,27 @@ export async function removeUser(
   const deletedUser =
     await deleteUser(env, userId);
 
+  await createAuditLog(env, {
+    actorUserId: admin.id,
+    action: "USER_DELETED_BY_ADMIN",
+    targetType: "user",
+    targetId: userId,
+    metadata: {
+      deleted_email: deletedUser.email,
+    },
+  });
+
   return Response.json({
     success: true,
     user: deletedUser,
   });
+}
+export async function adminAuditLogs(env, request) {
+  const user = await getAuthenticatedUser(request, env);
+
+  checkAdmin(user);
+
+  const logs = await getRecentAuditLogs(env);
+
+  return Response.json(logs);
 }

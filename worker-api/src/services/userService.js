@@ -1,5 +1,14 @@
 import { getDb } from "../utils/db";
 
+function extractFileNameFromImageUrl(imageUrl) {
+  if (!imageUrl) {
+    return null;
+  }
+
+  const parts = imageUrl.split("/image/");
+  return parts[1] || null;
+}
+
 export async function exportUserData(env, userId) {
   const sql = getDb(env);
 
@@ -34,4 +43,37 @@ export async function exportUserData(env, userId) {
     user: userResult[0],
     journals,
   };
+}
+
+export async function deleteMyAccountData(env, userId) {
+  const sql = getDb(env);
+
+  const journals = await sql`
+    SELECT image_url
+    FROM journals
+    WHERE user_id = ${userId}
+  `;
+
+  for (const journal of journals) {
+    const fileName = extractFileNameFromImageUrl(
+      journal.image_url
+    );
+
+    if (fileName) {
+      await env.IMAGES_BUCKET.delete(fileName);
+    }
+  }
+
+  await sql`
+    DELETE FROM journals
+    WHERE user_id = ${userId}
+  `;
+
+  const result = await sql`
+    DELETE FROM users
+    WHERE id = ${userId}
+    RETURNING id, name, email
+  `;
+
+  return result[0];
 }

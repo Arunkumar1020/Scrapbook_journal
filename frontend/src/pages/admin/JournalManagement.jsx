@@ -5,6 +5,7 @@ import {
   getAdminStats,
   getAdminUsers,
   getAdminJournals,
+  getAdminAuditLogs,
   updateAdminUserRole,
   deleteAdminUser,
 } from "../../services/adminService";
@@ -13,9 +14,12 @@ function JournalManagement() {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [journals, setJournals] = useState([]);
+  const [auditLogs, setAuditLogs] = useState([]);
+
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState(null);
+
   const [activeTab, setActiveTab] = useState("users");
   const [searchText, setSearchText] = useState("");
 
@@ -29,15 +33,22 @@ function JournalManagement() {
     try {
       setRefreshing(true);
 
-      const [statsData, usersData, journalsData] = await Promise.all([
+      const [
+        statsData,
+        usersData,
+        journalsData,
+        auditLogsData,
+      ] = await Promise.all([
         getAdminStats(),
         getAdminUsers(),
         getAdminJournals(),
+        getAdminAuditLogs(),
       ]);
 
       setStats(statsData);
       setUsers(usersData);
       setJournals(journalsData);
+      setAuditLogs(auditLogsData);
     } catch (error) {
       console.error(error);
       toast.error("Failed to load admin dashboard");
@@ -69,6 +80,46 @@ function JournalManagement() {
         journal.user_email?.toLowerCase().includes(text)
     );
   }, [journals, searchText]);
+
+  const filteredAuditLogs = useMemo(() => {
+    const text = searchText.toLowerCase();
+
+    return auditLogs.filter((log) => {
+      const metadataText = JSON.stringify(log.metadata || {}).toLowerCase();
+
+      return (
+        log.action?.toLowerCase().includes(text) ||
+        log.target_type?.toLowerCase().includes(text) ||
+        log.actor_name?.toLowerCase().includes(text) ||
+        log.actor_email?.toLowerCase().includes(text) ||
+        metadataText.includes(text)
+      );
+    });
+  }, [auditLogs, searchText]);
+
+  function getActionBadgeClass(action) {
+    if (action?.includes("LOGIN")) {
+      return "bg-blue-50 text-blue-700";
+    }
+
+    if (action?.includes("REGISTER")) {
+      return "bg-green-50 text-green-700";
+    }
+
+    if (action?.includes("DELETE")) {
+      return "bg-red-50 text-red-700";
+    }
+
+    if (action?.includes("EXPORTED")) {
+      return "bg-purple-50 text-purple-700";
+    }
+
+    if (action?.includes("ROLE")) {
+      return "bg-yellow-50 text-yellow-700";
+    }
+
+    return "bg-slate-100 text-slate-700";
+  }
 
   async function handleRoleChange(userId, role) {
     setActionLoadingId(userId);
@@ -106,6 +157,11 @@ function JournalManagement() {
     }
   }
 
+  function handleTabChange(tab) {
+    setActiveTab(tab);
+    setSearchText("");
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
@@ -122,11 +178,11 @@ function JournalManagement() {
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-3">
                 <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-100 ring-1 ring-blue-300/30">
-                  Admin Control Center
+                  🛡️ Admin Control Center
                 </span>
 
                 <span className="rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-100 ring-1 ring-emerald-300/30">
-                  Live System
+                  ✅ Security Monitoring Enabled
                 </span>
               </div>
 
@@ -135,8 +191,8 @@ function JournalManagement() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-                Manage users, monitor journal activity, track image uploads,
-                and control role-based access from one place.
+                Manage users, monitor journals, track image usage, and review
+                privacy/security activity logs from one dashboard.
               </p>
             </div>
 
@@ -160,7 +216,7 @@ function JournalManagement() {
           </div>
         </div>
 
-        <div className="grid gap-4 bg-slate-50 px-6 py-5 sm:grid-cols-3 sm:px-8">
+        <div className="grid gap-4 bg-slate-50 px-6 py-5 sm:grid-cols-4 sm:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
               Users
@@ -187,6 +243,15 @@ function JournalManagement() {
               {stats?.totalImages || 0}
             </p>
           </div>
+
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Audit Events
+            </p>
+            <p className="mt-1 text-2xl font-bold text-slate-900">
+              {auditLogs.length}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -196,7 +261,7 @@ function JournalManagement() {
             Management Panel
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Switch between user management and journal monitoring.
+            Review platform users, journals, and security activity.
           </p>
         </div>
 
@@ -210,13 +275,10 @@ function JournalManagement() {
       </div>
 
       <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+          <div className="flex flex-wrap gap-2">
             <button
-              onClick={() => {
-                setActiveTab("users");
-                setSearchText("");
-              }}
+              onClick={() => handleTabChange("users")}
               className={
                 activeTab === "users"
                   ? "rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
@@ -227,10 +289,7 @@ function JournalManagement() {
             </button>
 
             <button
-              onClick={() => {
-                setActiveTab("journals");
-                setSearchText("");
-              }}
+              onClick={() => handleTabChange("journals")}
               className={
                 activeTab === "journals"
                   ? "rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
@@ -238,6 +297,17 @@ function JournalManagement() {
               }
             >
               Journals ({journals.length})
+            </button>
+
+            <button
+              onClick={() => handleTabChange("audit")}
+              className={
+                activeTab === "audit"
+                  ? "rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+                  : "rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200"
+              }
+            >
+              Audit Logs ({auditLogs.length})
             </button>
           </div>
 
@@ -248,9 +318,11 @@ function JournalManagement() {
             placeholder={
               activeTab === "users"
                 ? "Search users by name, email, or role..."
-                : "Search journals by title, content, or owner..."
+                : activeTab === "journals"
+                ? "Search journals by title, content, or owner..."
+                : "Search audit logs by action, actor, or metadata..."
             }
-            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 md:max-w-md"
+            className="w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 xl:max-w-md"
           />
         </div>
       </div>
@@ -290,10 +362,7 @@ function JournalManagement() {
                   const isCurrentUser = currentUser?.id === user.id;
 
                   return (
-                    <tr
-                      key={user.id}
-                      className="border-b border-slate-100"
-                    >
+                    <tr key={user.id} className="border-b border-slate-100">
                       <td className="py-3 pr-4 font-medium text-slate-800">
                         {user.name}
                         {isCurrentUser && (
@@ -370,10 +439,7 @@ function JournalManagement() {
 
                 {filteredUsers.length === 0 && (
                   <tr>
-                    <td
-                      colSpan="6"
-                      className="py-8 text-center text-slate-500"
-                    >
+                    <td colSpan="6" className="py-8 text-center text-slate-500">
                       No users found.
                     </td>
                   </tr>
@@ -440,6 +506,99 @@ function JournalManagement() {
             {filteredJournals.length === 0 && (
               <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
                 No journals found.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeTab === "audit" && (
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                Audit Logs
+              </h2>
+              <p className="text-sm text-slate-500">
+                Security and privacy activity for GDPR/DPDP monitoring.
+              </p>
+            </div>
+
+            <p className="text-sm font-medium text-slate-500">
+              Showing {filteredAuditLogs.length} of {auditLogs.length}
+            </p>
+          </div>
+
+          <div className="grid gap-4">
+            {filteredAuditLogs.map((log) => (
+              <div
+                key={log.id}
+                className="rounded-2xl border border-slate-200 p-4"
+              >
+                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                  <div>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${getActionBadgeClass(
+                        log.action
+                      )}`}
+                    >
+                      {log.action}
+                    </span>
+
+                    <h3 className="mt-3 font-bold text-slate-900">
+                      {log.actor_name || "System / Deleted User"}
+                    </h3>
+
+                    <p className="text-sm text-slate-500">
+                      {log.actor_email || "No actor email"}
+                    </p>
+                  </div>
+
+                  <p className="text-xs font-medium text-slate-400">
+                    {new Date(log.created_at).toLocaleString()}
+                  </p>
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl bg-slate-50 p-3">
+                    <p className="text-xs font-bold uppercase text-slate-500">
+                      Target Type
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-800">
+                      {log.target_type || "N/A"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-slate-50 p-3">
+                    <p className="text-xs font-bold uppercase text-slate-500">
+                      Target ID
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-800">
+                      {log.target_id || "N/A"}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl bg-slate-50 p-3">
+                    <p className="text-xs font-bold uppercase text-slate-500">
+                      Actor ID
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-slate-800">
+                      {log.actor_user_id || "N/A"}
+                    </p>
+                  </div>
+                </div>
+
+                {log.metadata && (
+                  <pre className="mt-4 overflow-x-auto rounded-xl bg-slate-950 p-4 text-xs leading-6 text-slate-100">
+                    {JSON.stringify(log.metadata, null, 2)}
+                  </pre>
+                )}
+              </div>
+            ))}
+
+            {filteredAuditLogs.length === 0 && (
+              <div className="rounded-xl border border-dashed border-slate-300 p-8 text-center text-slate-500">
+                No audit logs found.
               </div>
             )}
           </div>

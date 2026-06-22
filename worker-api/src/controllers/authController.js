@@ -4,6 +4,7 @@ import {
 } from "../services/authService";
 
 import { generateToken } from "../utils/jwt";
+import { createAuditLog } from "../services/auditService";
 
 export async function register(env, request) {
   try {
@@ -17,10 +18,18 @@ export async function register(env, request) {
       body.consent_given
     );
 
-    const token = await generateToken(
-      user,
-      env
-    );
+    await createAuditLog(env, {
+      actorUserId: user.id,
+      action: "USER_REGISTERED",
+      targetType: "user",
+      targetId: user.id,
+      metadata: {
+        email: user.email,
+        consent_given: user.consent_given,
+      },
+    });
+
+    const token = await generateToken(user, env);
 
     return Response.json(
       {
@@ -55,10 +64,17 @@ export async function login(env, request) {
       body.password
     );
 
-    const token = await generateToken(
-      user,
-      env
-    );
+    await createAuditLog(env, {
+      actorUserId: user.id,
+      action: "USER_LOGIN",
+      targetType: "user",
+      targetId: user.id,
+      metadata: {
+        email: user.email,
+      },
+    });
+
+    const token = await generateToken(user, env);
 
     return Response.json({
       success: true,

@@ -44,6 +44,21 @@ export async function getAdminJournals() {
   return response.json();
 }
 
+export async function getAdminAuditLogs() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/audit-logs`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch audit logs");
+  }
+
+  return response.json();
+}
+
 export async function updateAdminUserRole(userId, role) {
   const response = await fetch(
     `${API_BASE_URL}/api/admin/users/${userId}`,

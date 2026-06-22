@@ -59,3 +59,24 @@ export async function exportMyData() {
 
   return response.json();
 }
+export async function deleteMyAccount() {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_BASE_URL}/api/me`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete account");
+  }
+
+  return data;
+}
