@@ -8,6 +8,7 @@ import {
 import { createAuditLog } from "../services/auditService";
 import { getAuthenticatedUser } from "../middleware/authMiddleware";
 import { getRecentAuditLogs } from "../services/auditService";
+import { getSecuritySummary } from "../services/auditService";
 function checkAdmin(user) {
   if (user.role !== "admin") {
     throw new Error("Admin access required");
@@ -145,4 +146,13 @@ export async function adminAuditLogs(env, request) {
   const logs = await getRecentAuditLogs(env);
 
   return Response.json(logs);
+}
+export async function adminSecuritySummary(env, request) {
+  const user = await getAuthenticatedUser(request, env);
+
+  checkAdmin(user);
+
+  const summary = await getSecuritySummary(env);
+
+  return Response.json(summary);
 }

@@ -6,12 +6,14 @@ import {
   getAdminUsers,
   getAdminJournals,
   getAdminAuditLogs,
+  getAdminSecuritySummary,
   updateAdminUserRole,
   deleteAdminUser,
 } from "../../services/adminService";
 
 function JournalManagement() {
   const [stats, setStats] = useState(null);
+  const [securitySummary, setSecuritySummary] = useState(null);
   const [users, setUsers] = useState([]);
   const [journals, setJournals] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
@@ -38,17 +40,20 @@ function JournalManagement() {
         usersData,
         journalsData,
         auditLogsData,
+        securityData,
       ] = await Promise.all([
         getAdminStats(),
         getAdminUsers(),
         getAdminJournals(),
         getAdminAuditLogs(),
+        getAdminSecuritySummary(),
       ]);
 
       setStats(statsData);
       setUsers(usersData);
       setJournals(journalsData);
       setAuditLogs(auditLogsData);
+      setSecuritySummary(securityData);
     } catch (error) {
       console.error(error);
       toast.error("Failed to load admin dashboard");
@@ -98,25 +103,13 @@ function JournalManagement() {
   }, [auditLogs, searchText]);
 
   function getActionBadgeClass(action) {
-    if (action?.includes("LOGIN")) {
-      return "bg-blue-50 text-blue-700";
-    }
-
-    if (action?.includes("REGISTER")) {
-      return "bg-green-50 text-green-700";
-    }
-
-    if (action?.includes("DELETE")) {
-      return "bg-red-50 text-red-700";
-    }
-
-    if (action?.includes("EXPORTED")) {
-      return "bg-purple-50 text-purple-700";
-    }
-
-    if (action?.includes("ROLE")) {
-      return "bg-yellow-50 text-yellow-700";
-    }
+    if (action?.includes("FAILED")) return "bg-red-50 text-red-700";
+    if (action?.includes("LOGIN")) return "bg-blue-50 text-blue-700";
+    if (action?.includes("REGISTER")) return "bg-green-50 text-green-700";
+    if (action?.includes("DELETE")) return "bg-red-50 text-red-700";
+    if (action?.includes("EXPORTED")) return "bg-purple-50 text-purple-700";
+    if (action?.includes("ROLE")) return "bg-yellow-50 text-yellow-700";
+    if (action?.includes("CONSENT")) return "bg-indigo-50 text-indigo-700";
 
     return "bg-slate-100 text-slate-700";
   }
@@ -173,11 +166,11 @@ function JournalManagement() {
   return (
     <section>
       <div className="mb-8 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div className="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 px-6 py-8 text-white sm:px-8">
+        <div className="bg-gradient-to-r from-slate-950 via-purple-950 to-slate-900 px-6 py-8 text-white sm:px-8">
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-blue-500/20 px-3 py-1 text-xs font-semibold text-blue-100 ring-1 ring-blue-300/30">
+                <span className="rounded-full bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-100 ring-1 ring-purple-300/30">
                   🛡️ Admin Control Center
                 </span>
 
@@ -191,8 +184,8 @@ function JournalManagement() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-                Manage users, monitor journals, track image usage, and review
-                privacy/security activity logs from one dashboard.
+                Manage users, monitor journals, track privacy events, and review
+                security activity from one dashboard.
               </p>
             </div>
 
@@ -255,13 +248,63 @@ function JournalManagement() {
         </div>
       </div>
 
+      <div className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-3xl border border-red-100 bg-red-50 p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-red-600">
+            🚨 Failed Logins
+          </p>
+          <h2 className="mt-3 text-3xl font-extrabold text-red-700">
+            {securitySummary?.failedLogins || 0}
+          </h2>
+          <p className="mt-2 text-xs text-red-600">
+            Login attempts with invalid credentials.
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-purple-100 bg-purple-50 p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-purple-600">
+            📤 Data Exports
+          </p>
+          <h2 className="mt-3 text-3xl font-extrabold text-purple-700">
+            {securitySummary?.dataExports || 0}
+          </h2>
+          <p className="mt-2 text-xs text-purple-600">
+            User data export requests.
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-orange-100 bg-orange-50 p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
+            🗑️ Account Deletes
+          </p>
+          <h2 className="mt-3 text-3xl font-extrabold text-orange-700">
+            {securitySummary?.accountDeletes || 0}
+          </h2>
+          <p className="mt-2 text-xs text-orange-600">
+            User or admin account deletion events.
+          </p>
+        </div>
+
+        <div className="rounded-3xl border border-yellow-100 bg-yellow-50 p-6 shadow-sm">
+          <p className="text-xs font-bold uppercase tracking-wide text-yellow-700">
+            🔐 Role Changes
+          </p>
+          <h2 className="mt-3 text-3xl font-extrabold text-yellow-700">
+            {securitySummary?.roleChanges || 0}
+          </h2>
+          <p className="mt-2 text-xs text-yellow-700">
+            Admin/user role updates.
+          </p>
+        </div>
+      </div>
+
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h2 className="text-2xl font-bold text-slate-900">
             Management Panel
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Review platform users, journals, and security activity.
+            Review users, journals, audit logs, and security events.
           </p>
         </div>
 
@@ -520,7 +563,7 @@ function JournalManagement() {
                 Audit Logs
               </h2>
               <p className="text-sm text-slate-500">
-                Security and privacy activity for GDPR/DPDP monitoring.
+                Security and privacy activity for compliance monitoring.
               </p>
             </div>
 

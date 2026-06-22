@@ -45,15 +45,27 @@ export async function getAdminJournals() {
 }
 
 export async function getAdminAuditLogs() {
+  const response = await fetch(`${API_BASE_URL}/api/admin/audit-logs`, {
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch audit logs");
+  }
+
+  return response.json();
+}
+
+export async function getAdminSecuritySummary() {
   const response = await fetch(
-    `${API_BASE_URL}/api/admin/audit-logs`,
+    `${API_BASE_URL}/api/admin/security-summary`,
     {
       headers: getAuthHeaders(),
     }
   );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch audit logs");
+    throw new Error("Failed to fetch security summary");
   }
 
   return response.json();

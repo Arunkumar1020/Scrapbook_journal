@@ -55,8 +55,11 @@ export async function register(env, request) {
 }
 
 export async function login(env, request) {
+  let email = "";
+
   try {
     const body = await request.json();
+    email = body.email;
 
     const user = await loginUser(
       env,
@@ -71,6 +74,7 @@ export async function login(env, request) {
       targetId: user.id,
       metadata: {
         email: user.email,
+        status: "success",
       },
     });
 
@@ -88,10 +92,22 @@ export async function login(env, request) {
       token,
     });
   } catch (error) {
+    await createAuditLog(env, {
+      actorUserId: null,
+      action: "FAILED_LOGIN",
+      targetType: "auth",
+      targetId: null,
+      metadata: {
+        email,
+        reason: error.message,
+        status: "failed",
+      },
+    });
+
     return Response.json(
       {
         success: false,
-        message: error.message,
+        message: "Invalid credentials",
       },
       {
         status: 401,

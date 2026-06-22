@@ -50,3 +50,39 @@ export async function getRecentAuditLogs(env) {
     LIMIT 50
   `;
 }
+
+export async function getSecuritySummary(env) {
+  const sql = getDb(env);
+
+  const failedLogins = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'FAILED_LOGIN'
+  `;
+
+  const dataExports = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'DATA_EXPORTED'
+  `;
+
+  const accountDeletes = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'ACCOUNT_DELETED'
+       OR action = 'USER_DELETED_BY_ADMIN'
+  `;
+
+  const roleChanges = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'USER_ROLE_UPDATED'
+  `;
+
+  return {
+    failedLogins: failedLogins[0].count,
+    dataExports: dataExports[0].count,
+    accountDeletes: accountDeletes[0].count,
+    roleChanges: roleChanges[0].count,
+  };
+}

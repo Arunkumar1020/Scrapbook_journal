@@ -5,6 +5,7 @@ import {
   changeUserRole,
   removeUser,
   adminAuditLogs,
+  adminSecuritySummary,
 } from "../controllers/adminController";
 export async function handleAdminRoutes(request, env) {
   const url = new URL(request.url);
@@ -59,6 +60,12 @@ if (
   url.pathname === "/api/admin/audit-logs"
 ) {
   return adminAuditLogs(env, request);
+}
+if (
+  request.method === "GET" &&
+  url.pathname === "/api/admin/security-summary"
+) {
+  return adminSecuritySummary(env, request);
 }
   return null;
 }
