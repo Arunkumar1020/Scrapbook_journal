@@ -60,6 +60,18 @@ export async function getSecuritySummary(env) {
     WHERE action = 'FAILED_LOGIN'
   `;
 
+  const mfaSuccess = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'MFA_LOGIN_SUCCESS'
+  `;
+
+  const mfaFailures = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'MFA_LOGIN_FAILED'
+  `;
+
   const dataExports = await sql`
     SELECT COUNT(*)::int AS count
     FROM audit_logs
@@ -69,8 +81,16 @@ export async function getSecuritySummary(env) {
   const accountDeletes = await sql`
     SELECT COUNT(*)::int AS count
     FROM audit_logs
-    WHERE action = 'ACCOUNT_DELETED'
-       OR action = 'USER_DELETED_BY_ADMIN'
+    WHERE action IN (
+      'ACCOUNT_DELETED',
+      'USER_DELETED_BY_ADMIN'
+    )
+  `;
+
+  const consentWithdrawals = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'CONSENT_WITHDRAWN'
   `;
 
   const roleChanges = await sql`
@@ -81,8 +101,12 @@ export async function getSecuritySummary(env) {
 
   return {
     failedLogins: failedLogins[0].count,
+    mfaSuccess: mfaSuccess[0].count,
+    mfaFailures: mfaFailures[0].count,
     dataExports: dataExports[0].count,
     accountDeletes: accountDeletes[0].count,
+    consentWithdrawals:
+      consentWithdrawals[0].count,
     roleChanges: roleChanges[0].count,
   };
 }

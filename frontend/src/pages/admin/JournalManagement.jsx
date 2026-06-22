@@ -249,54 +249,104 @@ function JournalManagement() {
       </div>
 
       <div className="mb-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-3xl border border-red-100 bg-red-50 p-6 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-red-600">
-            🚨 Failed Logins
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-red-700">
-            {securitySummary?.failedLogins || 0}
-          </h2>
-          <p className="mt-2 text-xs text-red-600">
-            Login attempts with invalid credentials.
-          </p>
-        </div>
+  <div className="rounded-3xl border border-red-100 bg-red-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-red-600">
+      🚨 Failed Logins
+    </p>
 
-        <div className="rounded-3xl border border-purple-100 bg-purple-50 p-6 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-purple-600">
-            📤 Data Exports
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-purple-700">
-            {securitySummary?.dataExports || 0}
-          </h2>
-          <p className="mt-2 text-xs text-purple-600">
-            User data export requests.
-          </p>
-        </div>
+    <h2 className="mt-3 text-3xl font-extrabold text-red-700">
+      {securitySummary?.failedLogins || 0}
+    </h2>
 
-        <div className="rounded-3xl border border-orange-100 bg-orange-50 p-6 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
-            🗑️ Account Deletes
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-orange-700">
-            {securitySummary?.accountDeletes || 0}
-          </h2>
-          <p className="mt-2 text-xs text-orange-600">
-            User or admin account deletion events.
-          </p>
-        </div>
+    <p className="mt-2 text-xs text-red-600">
+      Invalid credential login attempts.
+    </p>
+  </div>
 
-        <div className="rounded-3xl border border-yellow-100 bg-yellow-50 p-6 shadow-sm">
-          <p className="text-xs font-bold uppercase tracking-wide text-yellow-700">
-            🔐 Role Changes
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold text-yellow-700">
-            {securitySummary?.roleChanges || 0}
-          </h2>
-          <p className="mt-2 text-xs text-yellow-700">
-            Admin/user role updates.
-          </p>
-        </div>
-      </div>
+  <div className="rounded-3xl border border-green-100 bg-green-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+      🔐 MFA Success
+    </p>
+
+    <h2 className="mt-3 text-3xl font-extrabold text-green-700">
+      {securitySummary?.mfaSuccess || 0}
+    </h2>
+
+    <p className="mt-2 text-xs text-green-600">
+      Successful MFA authenticated logins.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-red-100 bg-red-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-red-600">
+      ❌ MFA Failures
+    </p>
+
+    <h2 className="mt-3 text-3xl font-extrabold text-red-700">
+      {securitySummary?.mfaFailures || 0}
+    </h2>
+
+    <p className="mt-2 text-xs text-red-600">
+      Failed authenticator verification attempts.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-purple-100 bg-purple-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-purple-600">
+      📤 Data Exports
+    </p>
+
+    <h2 className="mt-3 text-3xl font-extrabold text-purple-700">
+      {securitySummary?.dataExports || 0}
+    </h2>
+
+    <p className="mt-2 text-xs text-purple-600">
+      User data export requests.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-orange-100 bg-orange-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
+      🗑️ Account Deletes
+    </p>
+
+    <h2 className="mt-3 text-3xl font-extrabold text-orange-700">
+      {securitySummary?.accountDeletes || 0}
+    </h2>
+
+    <p className="mt-2 text-xs text-orange-600">
+      Deleted accounts by users or admins.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-indigo-100 bg-indigo-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-indigo-600">
+      📋 Consent Withdrawals
+    </p>
+
+    <h2 className="mt-3 text-3xl font-extrabold text-indigo-700">
+      {securitySummary?.consentWithdrawals || 0}
+    </h2>
+
+    <p className="mt-2 text-xs text-indigo-600">
+      Users who withdrew consent.
+    </p>
+  </div>
+
+  <div className="rounded-3xl border border-yellow-100 bg-yellow-50 p-6 shadow-sm">
+    <p className="text-xs font-bold uppercase tracking-wide text-yellow-700">
+      🔐 Role Changes
+    </p>
+
+    <h2 className="mt-3 text-3xl font-extrabold text-yellow-700">
+      {securitySummary?.roleChanges || 0}
+    </h2>
+
+    <p className="mt-2 text-xs text-yellow-700">
+      Admin/User role modifications.
+    </p>
+  </div>
+</div>
 
       <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>

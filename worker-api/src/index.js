@@ -5,6 +5,7 @@ import { handleAuthRoutes } from "./routes/authRoutes";
 import { handleAdminRoutes } from "./routes/adminRoutes";
 import { handleUserRoutes } from "./routes/userRoutes";
 import { handleLegalRoutes } from "./routes/legalRoutes";
+import { handleMfaRoutes } from "./routes/mfaRoutes";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -134,6 +135,11 @@ export default {
           })
         );
       }
+      const mfaResponse = await handleMfaRoutes(request, env);
+
+if (mfaResponse) {
+  return withCors(mfaResponse);
+}
       const legalResponse = await handleLegalRoutes(request);
 
 if (legalResponse) {
