@@ -3,6 +3,7 @@ import {
   getDataRetentionPolicy,
   getIncidentResponsePlan,
   getSecurityPolicy,
+  getTermsAndConditions,
 } from "../controllers/legalController";
 
 export async function handleLegalRoutes(request) {
@@ -34,6 +35,13 @@ export async function handleLegalRoutes(request) {
     url.pathname === "/api/legal/security-policy"
   ) {
     return getSecurityPolicy();
+  }
+
+  if (
+    request.method === "GET" &&
+    url.pathname === "/api/legal/terms"
+  ) {
+    return getTermsAndConditions();
   }
 
   return null;

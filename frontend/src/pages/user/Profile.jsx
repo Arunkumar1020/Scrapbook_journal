@@ -262,29 +262,7 @@ function Profile() {
         </button>
         
       </div>
-<Link
-  to="/incident-response"
-  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
->
-  View Incident Response Plan
-</Link><Link
-  to="/security"
-  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
->
-  View Security Policy
-</Link>
-        <Link
-          to="/privacy"
-          className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
-        >
-          View Privacy Policy
-        </Link>
-        <Link
-  to="/data-retention"
-  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
->
-  View Data Retention Policy
-</Link>
+
       <div className="mt-6 rounded-3xl border border-red-200 bg-red-50 p-6">
         <h2 className="text-xl font-bold text-red-700">
           Danger Zone
@@ -316,7 +294,15 @@ function Profile() {
             {deleting ? "Deleting..." : "Delete My Account"}
           </button>
         </div>
+        
+
       </div>
+      <Link
+  to="/compliance"
+  className="ml-4 inline-block text-sm font-bold text-blue-700 hover:text-blue-800"
+>
+  🏛️ Open Compliance Center
+</Link>
     </section>
   );
 }

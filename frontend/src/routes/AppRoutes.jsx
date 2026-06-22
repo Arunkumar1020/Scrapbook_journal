@@ -19,6 +19,8 @@ import PrivacyPolicy from "../pages/legal/PrivacyPolicy";
 import DataRetentionPolicy from "../pages/legal/DataRetentionPolicy";
 import IncidentResponsePlan from "../pages/legal/IncidentResponsePlan";
 import SecurityPolicy from "../pages/legal/SecurityPolicy";
+import TermsAndConditions from "../pages/legal/TermsAndConditions";
+import ComplianceCenter from "../pages/legal/ComplianceCenter";
 function AppRoutes() {
   return (
     <Routes>
@@ -33,6 +35,11 @@ function AppRoutes() {
       <Route path="/data-retention" element={<DataRetentionPolicy />} />
       <Route path="/incident-response" element={<IncidentResponsePlan />} />
       <Route path="/security" element={<SecurityPolicy />} />
+      <Route path="/compliance" element={<ComplianceCenter />} />
+      <Route
+  path="/terms"
+  element={<TermsAndConditions />}
+/>
       {/* Protected User Routes */}
       <Route
         element={

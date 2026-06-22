@@ -47,3 +47,16 @@ export async function getSecurityPolicy() {
 
   return response.json();
 }
+export async function getTermsAndConditions() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/legal/terms`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch terms and conditions"
+    );
+  }
+
+  return response.json();
+}

@@ -267,3 +267,60 @@ export function getSecurityPolicyData() {
       "This security policy is a technical project document and should be reviewed before production business use.",
   };
 }
+export function getTermsAndConditionsData() {
+  return {
+    version: "1.0",
+    effective_date: "2026-06-22",
+    app_name: "ScrapBook Journal Tracker",
+    introduction:
+      "By creating an account and using ScrapBook Journal Tracker, you agree to these Terms and Conditions.",
+
+    sections: [
+      {
+        title: "Account Registration",
+        content:
+          "Users must provide accurate information during registration and are responsible for maintaining account security."
+      },
+      {
+        title: "Acceptable Use",
+        content:
+          "Users must not upload illegal, harmful, abusive, or malicious content. Attempts to compromise the platform are prohibited."
+      },
+      {
+        title: "User Content",
+        content:
+          "Users retain ownership of journals, text, and uploaded images. ScrapBook stores this content only to provide the service."
+      },
+      {
+        title: "Privacy",
+        content:
+          "Personal information is processed according to the Privacy Policy and Data Retention Policy."
+      },
+      {
+        title: "Security",
+        content:
+          "Users are responsible for protecting account credentials and are encouraged to enable MFA."
+      },
+      {
+        title: "Account Termination",
+        content:
+          "Users may delete their account at any time. Administrators may suspend or remove accounts violating these terms."
+      },
+      {
+        title: "Service Availability",
+        content:
+          "The service is provided on a best-effort basis without guarantees of uninterrupted availability."
+      },
+      {
+        title: "Limitation of Liability",
+        content:
+          "ScrapBook is provided as a project application and is not liable for indirect or consequential damages."
+      }
+    ],
+
+    contact_email: "support@scrapbook.app",
+
+    note:
+      "This document is intended for educational and project purposes and should be reviewed by legal counsel before production business use."
+  };
+}
