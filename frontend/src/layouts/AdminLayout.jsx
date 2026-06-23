@@ -46,15 +46,21 @@ function AdminLayout() {
             <NavLink to="/admin/journals" className={navClass}>
               📊 Dashboard
             </NavLink>
-
+            
             <Link
               to="/"
               className="rounded-2xl px-5 py-3 text-sm font-semibold text-slate-600 hover:bg-slate-100 hover:text-blue-600"
             >
               🏠 User Area
             </Link>
+            
           </nav>
-
+            <NavLink
+  to="/admin/compliance"
+  className={navClass}
+>
+  🏛 Compliance
+</NavLink>
           <div className="flex items-center gap-3">
             <div className="hidden rounded-2xl border border-purple-100 bg-purple-50 px-4 py-2 md:block">
               <p className="text-sm font-bold text-slate-900">
@@ -102,6 +108,7 @@ function AdminLayout() {
                 🏠 Back to User Area
               </button>
             </Link>
+            
           </div>
         </div>
       </section>

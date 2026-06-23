@@ -106,3 +106,19 @@ export async function deleteAdminUser(userId) {
 
   return response.json();
 }
+export async function getComplianceSummary() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/compliance-summary`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to load compliance summary"
+    );
+  }
+
+  return response.json();
+}

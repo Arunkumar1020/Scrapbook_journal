@@ -118,3 +118,70 @@ export async function deleteUser(env, userId) {
 
   return result[0];
 }
+export async function getComplianceSummary(env) {
+  const sql = getDb(env);
+
+  const totalUsers = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM users
+  `;
+
+  const consentGiven = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM users
+    WHERE consent_given = true
+  `;
+
+  const mfaEnabled = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM users
+    WHERE mfa_enabled = true
+  `;
+
+  const dataExports = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'DATA_EXPORTED'
+  `;
+
+  const accountDeletes = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action IN (
+      'ACCOUNT_DELETED',
+      'USER_DELETED_BY_ADMIN'
+    )
+  `;
+
+  const failedLogins = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'FAILED_LOGIN'
+  `;
+
+  const mfaFailures = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'MFA_LOGIN_FAILED'
+  `;
+
+  const roleChanges = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM audit_logs
+    WHERE action = 'USER_ROLE_UPDATED'
+  `;
+
+  return {
+    totalUsers: totalUsers[0].count,
+    consentGiven: consentGiven[0].count,
+    consentMissing:
+      totalUsers[0].count -
+      consentGiven[0].count,
+    mfaEnabled: mfaEnabled[0].count,
+    dataExports: dataExports[0].count,
+    accountDeletes: accountDeletes[0].count,
+    failedLogins: failedLogins[0].count,
+    mfaFailures: mfaFailures[0].count,
+    roleChanges: roleChanges[0].count,
+  };
+}

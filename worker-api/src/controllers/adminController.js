@@ -156,3 +156,11 @@ export async function adminSecuritySummary(env, request) {
 
   return Response.json(summary);
 }
+export async function getComplianceSummaryController(
+  env
+) {
+  const summary =
+    await getComplianceSummary(env);
+
+  return Response.json(summary);
+}

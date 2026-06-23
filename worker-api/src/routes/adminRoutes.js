@@ -67,5 +67,14 @@ if (
 ) {
   return adminSecuritySummary(env, request);
 }
+if (
+  request.method === "GET" &&
+  url.pathname ===
+    "/api/admin/compliance-summary"
+) {
+  return getComplianceSummaryController(
+    env
+  );
+}
   return null;
 }

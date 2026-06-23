@@ -23,6 +23,7 @@ import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ComplianceCenter from "../pages/legal/ComplianceCenter";
 import MfaSettings from "../pages/user/MfaSettings";
 import CookiePolicy from "../pages/legal/CookiePolicy";
+import ComplianceHub from "../pages/admin/ComplianceHub";
 function AppRoutes() {
   return (
     <Routes>
@@ -90,7 +91,10 @@ function AppRoutes() {
           element={<JournalManagement />}
         />
       </Route>
-
+        <Route
+  path="/admin/compliance"
+  element={<ComplianceHub />}
+/>
       {/* Fallback */}
       <Route
         path="*"
