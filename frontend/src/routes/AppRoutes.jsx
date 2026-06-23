@@ -14,6 +14,7 @@ import PrivacyRequestCenter from "../pages/user/PrivacyRequestCenter";
 import JournalManagement from "../pages/admin/JournalManagement";
 import ComplianceHub from "../pages/admin/ComplianceHub";
 import PrivacyRequestsAdmin from "../pages/admin/PrivacyRequestsAdmin";
+import RetentionManagement from "../pages/admin/RetentionManagement";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -32,7 +33,6 @@ import CookiePolicy from "../pages/legal/CookiePolicy";
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
@@ -40,20 +40,10 @@ function AppRoutes() {
       <Route path="/cookies" element={<CookiePolicy />} />
       <Route path="/terms" element={<TermsAndConditions />} />
       <Route path="/security" element={<SecurityPolicy />} />
-      <Route
-        path="/data-retention"
-        element={<DataRetentionPolicy />}
-      />
-      <Route
-        path="/incident-response"
-        element={<IncidentResponsePlan />}
-      />
-      <Route
-        path="/compliance"
-        element={<ComplianceCenter />}
-      />
+      <Route path="/data-retention" element={<DataRetentionPolicy />} />
+      <Route path="/incident-response" element={<IncidentResponsePlan />} />
+      <Route path="/compliance" element={<ComplianceCenter />} />
 
-      {/* User Routes */}
       <Route
         element={
           <ProtectedRoute>
@@ -62,39 +52,14 @@ function AppRoutes() {
         }
       >
         <Route path="/" element={<Dashboard />} />
-
-        <Route
-          path="/journals/create"
-          element={<CreateJournal />}
-        />
-
-        <Route
-          path="/journals/edit/:id"
-          element={<EditJournal />}
-        />
-
-        <Route
-          path="/journals/:id"
-          element={<JournalDetails />}
-        />
-
-        <Route
-          path="/profile"
-          element={<Profile />}
-        />
-
-        <Route
-          path="/mfa-settings"
-          element={<MfaSettings />}
-        />
-
-        <Route
-          path="/privacy-requests"
-          element={<PrivacyRequestCenter />}
-        />
+        <Route path="/journals/create" element={<CreateJournal />} />
+        <Route path="/journals/edit/:id" element={<EditJournal />} />
+        <Route path="/journals/:id" element={<JournalDetails />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/mfa-settings" element={<MfaSettings />} />
+        <Route path="/privacy-requests" element={<PrivacyRequestCenter />} />
       </Route>
 
-      {/* Admin Routes */}
       <Route
         path="/admin"
         element={
@@ -105,32 +70,14 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route
-          index
-          element={<ComplianceHub />}
-        />
-
-        <Route
-          path="compliance"
-          element={<ComplianceHub />}
-        />
-
-        <Route
-          path="journals"
-          element={<JournalManagement />}
-        />
-
-        <Route
-          path="privacy-requests"
-          element={<PrivacyRequestsAdmin />}
-        />
+        <Route index element={<ComplianceHub />} />
+        <Route path="compliance" element={<ComplianceHub />} />
+        <Route path="journals" element={<JournalManagement />} />
+        <Route path="privacy-requests" element={<PrivacyRequestsAdmin />} />
+        <Route path="retention" element={<RetentionManagement />} />
       </Route>
 
-      {/* Fallback */}
-      <Route
-        path="*"
-        element={<Navigate to="/" replace />}
-      />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

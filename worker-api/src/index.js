@@ -7,7 +7,7 @@ import { handleAdminRoutes } from "./routes/adminRoutes";
 import { handleUserRoutes } from "./routes/userRoutes";
 import { handleLegalRoutes } from "./routes/legalRoutes";
 import { handleMfaRoutes } from "./routes/mfaRoutes";
-
+import { handleRetentionRoutes } from "./routes/retentionRoutes";
 import {
   getMyCookieConsent,
   updateMyCookieConsent,
@@ -180,7 +180,8 @@ export default {
           })
         );
       }
-
+      const retentionResponse = await handleRetentionRoutes(request, env);
+      if (retentionResponse) {  return withCors(retentionResponse);}
       const authResponse = await handleAuthRoutes(request, env);
       if (authResponse) return withCors(authResponse);
 

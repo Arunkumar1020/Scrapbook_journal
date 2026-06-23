@@ -63,6 +63,9 @@ function AdminLayout() {
 </NavLink><NavLink to="/admin/privacy-requests" className={navClass}>
   📝 Privacy Requests
 </NavLink>
+<NavLink to="/admin/retention" className={navClass}>
+  🗂️ Retention
+</NavLink>
           <div className="flex items-center gap-3">
             <div className="hidden rounded-2xl border border-purple-100 bg-purple-50 px-4 py-2 md:block">
               <p className="text-sm font-bold text-slate-900">
