@@ -1,9 +1,7 @@
 import { getDb } from "../utils/db";
 
 function extractFileNameFromImageUrl(imageUrl) {
-  if (!imageUrl) {
-    return null;
-  }
+  if (!imageUrl) return null;
 
   const parts = imageUrl.split("/image/");
   return parts[1] || null;
@@ -20,6 +18,9 @@ export async function exportUserData(env, userId) {
       role,
       consent_given,
       consent_given_at,
+      cookie_consent,
+      cookie_consent_version,
+      cookie_consent_at,
       created_at
     FROM users
     WHERE id = ${userId}
@@ -62,11 +63,7 @@ export async function getUserConsent(env, userId) {
   return result[0];
 }
 
-export async function updateUserConsent(
-  env,
-  userId,
-  consentGiven
-) {
+export async function updateUserConsent(env, userId, consentGiven) {
   const sql = getDb(env);
 
   const result = await sql`
@@ -89,6 +86,49 @@ export async function updateUserConsent(
   return result[0];
 }
 
+export async function getCookieConsent(env, userId) {
+  const sql = getDb(env);
+
+  const result = await sql`
+    SELECT
+      id,
+      email,
+      cookie_consent,
+      cookie_consent_version,
+      cookie_consent_at
+    FROM users
+    WHERE id = ${userId}
+  `;
+
+  return result[0];
+}
+
+export async function updateCookieConsent(
+  env,
+  userId,
+  cookieConsent,
+  version = "1.0"
+) {
+  const sql = getDb(env);
+
+  const result = await sql`
+    UPDATE users
+    SET
+      cookie_consent = ${cookieConsent},
+      cookie_consent_version = ${version},
+      cookie_consent_at = NOW()
+    WHERE id = ${userId}
+    RETURNING
+      id,
+      email,
+      cookie_consent,
+      cookie_consent_version,
+      cookie_consent_at
+  `;
+
+  return result[0];
+}
+
 export async function deleteMyAccountData(env, userId) {
   const sql = getDb(env);
 
@@ -99,9 +139,7 @@ export async function deleteMyAccountData(env, userId) {
   `;
 
   for (const journal of journals) {
-    const fileName = extractFileNameFromImageUrl(
-      journal.image_url
-    );
+    const fileName = extractFileNameFromImageUrl(journal.image_url);
 
     if (fileName) {
       await env.IMAGES_BUCKET.delete(fileName);

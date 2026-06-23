@@ -1,11 +1,18 @@
 import { randomUUID } from "crypto";
 import { getDb } from "./utils/db";
-import { handleJournalRoutes } from "./routes/journalRoutes";
+
 import { handleAuthRoutes } from "./routes/authRoutes";
+import { handleJournalRoutes } from "./routes/journalRoutes";
 import { handleAdminRoutes } from "./routes/adminRoutes";
 import { handleUserRoutes } from "./routes/userRoutes";
 import { handleLegalRoutes } from "./routes/legalRoutes";
 import { handleMfaRoutes } from "./routes/mfaRoutes";
+
+import {
+  getMyCookieConsent,
+  updateMyCookieConsent,
+} from "./controllers/userController";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -13,16 +20,16 @@ const corsHeaders = {
 };
 
 function withCors(response) {
-  const newHeaders = new Headers(response.headers);
+  const headers = new Headers(response.headers);
 
   Object.entries(corsHeaders).forEach(([key, value]) => {
-    newHeaders.set(key, value);
+    headers.set(key, value);
   });
 
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers: newHeaders,
+    headers,
   });
 }
 
@@ -37,6 +44,15 @@ export default {
     }
 
     try {
+      if (url.pathname === "/api/debug-version") {
+  return withCors(
+    Response.json({
+      status: "ok",
+      version: "cookie-route-test-v1",
+      time: new Date().toISOString(),
+    })
+  );
+}
       if (url.pathname === "/") {
         return withCors(
           Response.json({
@@ -73,7 +89,28 @@ export default {
         );
       }
 
-      if (request.method === "POST" && url.pathname === "/upload") {
+      // if (
+      //   request.method === "GET" &&
+      //   url.pathname === "/api/me/cookie-consent"
+      // ) {
+      //   return withCors(
+      //     await getMyCookieConsent(env, request)
+      //   );
+      // }
+
+      // if (
+      //   request.method === "PUT" &&
+      //   url.pathname === "/api/me/cookie-consent"
+      // ) {
+      //   return withCors(
+      //     await updateMyCookieConsent(env, request)
+      //   );
+      // }
+
+      if (
+        request.method === "POST" &&
+        url.pathname === "/upload"
+      ) {
         const formData = await request.formData();
         const file = formData.get("image");
 
@@ -94,11 +131,15 @@ export default {
         const extension = file.name.split(".").pop();
         const fileName = `${randomUUID()}.${extension}`;
 
-        await env.IMAGES_BUCKET.put(fileName, await file.arrayBuffer(), {
-          httpMetadata: {
-            contentType: file.type,
-          },
-        });
+        await env.IMAGES_BUCKET.put(
+          fileName,
+          await file.arrayBuffer(),
+          {
+            httpMetadata: {
+              contentType: file.type,
+            },
+          }
+        );
 
         return withCors(
           Response.json({
@@ -108,7 +149,10 @@ export default {
         );
       }
 
-      if (request.method === "GET" && url.pathname.startsWith("/image/")) {
+      if (
+        request.method === "GET" &&
+        url.pathname.startsWith("/image/")
+      ) {
         const fileName = url.pathname.replace("/image/", "");
         const object = await env.IMAGES_BUCKET.get(fileName);
 
@@ -130,40 +174,30 @@ export default {
           new Response(object.body, {
             headers: {
               "Content-Type":
-                object.httpMetadata?.contentType || "application/octet-stream",
+                object.httpMetadata?.contentType ||
+                "application/octet-stream",
             },
           })
         );
       }
-      const mfaResponse = await handleMfaRoutes(request, env);
 
-if (mfaResponse) {
-  return withCors(mfaResponse);
-}
-      const legalResponse = await handleLegalRoutes(request);
-
-if (legalResponse) {
-  return withCors(legalResponse);
-}
       const authResponse = await handleAuthRoutes(request, env);
+      if (authResponse) return withCors(authResponse);
 
-if (authResponse) {
-  return withCors(authResponse);
-}const adminResponse = await handleAdminRoutes(request, env);
+      const userResponse = await handleUserRoutes(request, env);
+      if (userResponse) return withCors(userResponse);
 
-if (adminResponse) {
-  return withCors(adminResponse);
-}
-const userResponse = await handleUserRoutes(request, env);
+      const mfaResponse = await handleMfaRoutes(request, env);
+      if (mfaResponse) return withCors(mfaResponse);
 
-if (userResponse) {
-  return withCors(userResponse);
-}
       const journalResponse = await handleJournalRoutes(request, env);
+      if (journalResponse) return withCors(journalResponse);
 
-      if (journalResponse) {
-        return withCors(journalResponse);
-      }
+      const adminResponse = await handleAdminRoutes(request, env);
+      if (adminResponse) return withCors(adminResponse);
+
+      const legalResponse = await handleLegalRoutes(request);
+      if (legalResponse) return withCors(legalResponse);
 
       return withCors(
         Response.json(

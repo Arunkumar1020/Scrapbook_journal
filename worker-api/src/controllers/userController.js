@@ -3,6 +3,8 @@ import {
   deleteMyAccountData,
   getUserConsent,
   updateUserConsent,
+  getCookieConsent,
+  updateCookieConsent,
 } from "../services/userService";
 
 import { getAuthenticatedUser } from "../middleware/authMiddleware";
@@ -10,7 +12,6 @@ import { createAuditLog } from "../services/auditService";
 
 export async function exportMyData(env, request) {
   const user = await getAuthenticatedUser(request, env);
-
   const data = await exportUserData(env, user.id);
 
   await createAuditLog(env, {
@@ -33,7 +34,6 @@ export async function exportMyData(env, request) {
 
 export async function getMyConsent(env, request) {
   const user = await getAuthenticatedUser(request, env);
-
   const consent = await getUserConsent(env, user.id);
 
   return Response.json(consent);
@@ -41,7 +41,6 @@ export async function getMyConsent(env, request) {
 
 export async function updateMyConsent(env, request) {
   const user = await getAuthenticatedUser(request, env);
-
   const body = await request.json();
 
   const consentGiven = Boolean(body.consent_given);
@@ -54,14 +53,52 @@ export async function updateMyConsent(env, request) {
 
   await createAuditLog(env, {
     actorUserId: user.id,
-    action: consentGiven
-      ? "CONSENT_GRANTED"
-      : "CONSENT_WITHDRAWN",
+    action: consentGiven ? "CONSENT_GRANTED" : "CONSENT_WITHDRAWN",
     targetType: "user",
     targetId: user.id,
     metadata: {
       email: user.email,
       consent_given: consentGiven,
+    },
+  });
+
+  return Response.json({
+    success: true,
+    consent: updatedConsent,
+  });
+}
+
+export async function getMyCookieConsent(env, request) {
+  const user = await getAuthenticatedUser(request, env);
+  const consent = await getCookieConsent(env, user.id);
+
+  return Response.json(consent);
+}
+
+export async function updateMyCookieConsent(env, request) {
+  const user = await getAuthenticatedUser(request, env);
+  const body = await request.json();
+
+  const cookieConsent = Boolean(body.cookie_consent);
+
+  const updatedConsent = await updateCookieConsent(
+    env,
+    user.id,
+    cookieConsent,
+    "1.0"
+  );
+
+  await createAuditLog(env, {
+    actorUserId: user.id,
+    action: cookieConsent
+      ? "COOKIE_CONSENT_ACCEPTED"
+      : "COOKIE_CONSENT_REJECTED",
+    targetType: "user",
+    targetId: user.id,
+    metadata: {
+      email: user.email,
+      cookie_consent: cookieConsent,
+      version: "1.0",
     },
   });
 
