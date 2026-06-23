@@ -4,6 +4,7 @@ import {
   getIncidentResponsePlanData,
   getSecurityPolicyData,
   getTermsAndConditionsData,
+  getCookiePolicyData,
 } from "../services/legalService";
 
 export async function getPrivacyPolicy() {
@@ -25,5 +26,10 @@ export async function getSecurityPolicy() {
 export async function getTermsAndConditions() {
   return Response.json(
     getTermsAndConditionsData()
+  );
+}
+export async function getCookiePolicy() {
+  return Response.json(
+    getCookiePolicyData()
   );
 }

@@ -60,3 +60,16 @@ export async function getTermsAndConditions() {
 
   return response.json();
 }
+export async function getCookiePolicy() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/legal/cookie-policy`
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      "Failed to fetch cookie policy"
+    );
+  }
+
+  return response.json();
+}

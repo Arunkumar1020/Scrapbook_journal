@@ -4,6 +4,7 @@ import {
   getIncidentResponsePlan,
   getSecurityPolicy,
   getTermsAndConditions,
+  getCookiePolicy,
 } from "../controllers/legalController";
 
 export async function handleLegalRoutes(request) {
@@ -43,6 +44,12 @@ export async function handleLegalRoutes(request) {
   ) {
     return getTermsAndConditions();
   }
+  if (
+  request.method === "GET" &&
+  url.pathname === "/api/legal/cookie-policy"
+) {
+  return getCookiePolicy();
+}
 
   return null;
 }

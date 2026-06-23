@@ -22,6 +22,7 @@ import SecurityPolicy from "../pages/legal/SecurityPolicy";
 import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ComplianceCenter from "../pages/legal/ComplianceCenter";
 import MfaSettings from "../pages/user/MfaSettings";
+import CookiePolicy from "../pages/legal/CookiePolicy";
 function AppRoutes() {
   return (
     <Routes>
@@ -37,6 +38,10 @@ function AppRoutes() {
       <Route path="/incident-response" element={<IncidentResponsePlan />} />
       <Route path="/security" element={<SecurityPolicy />} />
       <Route path="/compliance" element={<ComplianceCenter />} />
+      <Route
+  path="/cookies"
+  element={<CookiePolicy />}
+/>
       <Route
   path="/terms"
   element={<TermsAndConditions />}

@@ -324,3 +324,53 @@ export function getTermsAndConditionsData() {
       "This document is intended for educational and project purposes and should be reviewed by legal counsel before production business use."
   };
 }
+export function getCookiePolicyData() {
+  return {
+    version: "1.0",
+    effective_date: "2026-06-22",
+    app_name: "ScrapBook Journal Tracker",
+
+    introduction:
+      "This Cookie Policy explains how ScrapBook uses browser storage, authentication tokens, and similar technologies.",
+
+    categories: [
+      {
+        name: "Essential Authentication",
+        purpose:
+          "Stores login session information and authentication tokens required for secure access.",
+        required: true,
+      },
+      {
+        name: "Security",
+        purpose:
+          "Supports MFA, audit logging, session validation, and fraud prevention.",
+        required: true,
+      },
+      {
+        name: "Preferences",
+        purpose:
+          "Stores user interface preferences and personalization settings.",
+        required: false,
+      },
+    ],
+
+    storage_used: [
+      "JWT Authentication Token",
+      "Browser Local Storage",
+      "Session Storage (if enabled)",
+      "Authenticator MFA Secrets (server-side)",
+    ],
+
+    user_rights: [
+      "Users may clear browser storage at any time.",
+      "Users may delete their account.",
+      "Users may export their data.",
+      "Users may withdraw consent where applicable.",
+    ],
+
+    contact_email: "support@scrapbook.app",
+
+    note:
+      "This Cookie Policy is intended for project and educational purposes and should be reviewed before commercial deployment.",
+  };
+}

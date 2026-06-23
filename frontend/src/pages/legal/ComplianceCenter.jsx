@@ -42,6 +42,14 @@ function ComplianceCenter() {
       path: "/terms",
       color: "slate",
     },
+    {
+  title: "Cookie Policy",
+  description:
+    "Explains browser storage, JWT token usage, local storage, security cookies, and user control over browser data.",
+  icon: "🍪",
+  path: "/cookies",
+  color: "amber",
+},
   ];
 
   return (
@@ -119,6 +127,7 @@ function ComplianceCenter() {
                 "JWT Secret Management",
                 "Privacy Policy",
                 "Data Retention Policy",
+                "Cookie Policy",
               ].map((item) => (
                 <div
                   key={item}
