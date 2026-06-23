@@ -21,6 +21,7 @@ import IncidentResponsePlan from "../pages/legal/IncidentResponsePlan";
 import SecurityPolicy from "../pages/legal/SecurityPolicy";
 import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ComplianceCenter from "../pages/legal/ComplianceCenter";
+import MfaSettings from "../pages/user/MfaSettings";
 function AppRoutes() {
   return (
     <Routes>
@@ -67,7 +68,7 @@ function AppRoutes() {
         <Route path="/profile" 
         element={<Profile />} />
       </Route>
-
+        <Route path="/mfa-settings" element={<MfaSettings />} />
       {/* Protected Admin Routes */}
       <Route
         path="/admin"

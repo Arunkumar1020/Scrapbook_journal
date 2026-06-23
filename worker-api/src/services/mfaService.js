@@ -11,33 +11,20 @@ function bytesToBase32(bytes) {
   }
 
   for (let i = 0; i < bits.length; i += 5) {
-    const chunk = bits.slice(i, i + 5);
-
-    if (chunk.length < 5) {
-      output += base32Alphabet[parseInt(chunk.padEnd(5, "0"), 2)];
-    } else {
-      output += base32Alphabet[parseInt(chunk, 2)];
-    }
+    const chunk = bits.slice(i, i + 5).padEnd(5, "0");
+    output += base32Alphabet[parseInt(chunk, 2)];
   }
 
   return output;
 }
 
 function base32ToBytes(base32) {
-  const clean = base32
-    .replace(/=+$/, "")
-    .replace(/\s/g, "")
-    .toUpperCase();
-
+  const clean = base32.replace(/=+$/, "").replace(/\s/g, "").toUpperCase();
   let bits = "";
 
   for (const char of clean) {
     const value = base32Alphabet.indexOf(char);
-
-    if (value === -1) {
-      continue;
-    }
-
+    if (value === -1) continue;
     bits += value.toString(2).padStart(5, "0");
   }
 
@@ -53,20 +40,10 @@ function base32ToBytes(base32) {
 function counterToBytes(counter) {
   const buffer = new ArrayBuffer(8);
   const view = new DataView(buffer);
-
   const bigCounter = BigInt(counter);
 
-  view.setUint32(
-    0,
-    Number((bigCounter >> 32n) & 0xffffffffn),
-    false
-  );
-
-  view.setUint32(
-    4,
-    Number(bigCounter & 0xffffffffn),
-    false
-  );
+  view.setUint32(0, Number((bigCounter >> 32n) & 0xffffffffn), false);
+  view.setUint32(4, Number(bigCounter & 0xffffffffn), false);
 
   return new Uint8Array(buffer);
 }
@@ -75,31 +52,21 @@ async function hmacSha1(keyBytes, messageBytes) {
   const key = await crypto.subtle.importKey(
     "raw",
     keyBytes,
-    {
-      name: "HMAC",
-      hash: "SHA-1",
-    },
+    { name: "HMAC", hash: "SHA-1" },
     false,
     ["sign"]
   );
 
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    messageBytes
-  );
+  const signature = await crypto.subtle.sign("HMAC", key, messageBytes);
 
   return new Uint8Array(signature);
 }
 
 async function generateTotp(secret, offset = 0) {
-  const timeStep = 30;
-  const counter =
-    Math.floor(Date.now() / 1000 / timeStep) + offset;
+  const counter = Math.floor(Date.now() / 1000 / 30) + offset;
 
   const keyBytes = base32ToBytes(secret);
   const counterBytes = counterToBytes(counter);
-
   const hmac = await hmacSha1(keyBytes, counterBytes);
 
   const dynamicOffset = hmac[hmac.length - 1] & 0x0f;
@@ -129,6 +96,18 @@ export function generateOtpAuthUrl(email, secret) {
   )}&algorithm=SHA1&digits=6&period=30`;
 }
 
+export async function getUserMfaDetails(env, userId) {
+  const sql = getDb(env);
+
+  const result = await sql`
+    SELECT id, email, mfa_enabled, mfa_secret
+    FROM users
+    WHERE id = ${userId}
+  `;
+
+  return result[0];
+}
+
 export async function saveMfaSecret(env, userId, secret) {
   const sql = getDb(env);
 
@@ -155,17 +134,16 @@ export async function enableMfaForUser(env, userId) {
   return result[0];
 }
 
-export async function getUserMfaDetails(env, userId) {
+export async function disableMfaForUser(env, userId) {
   const sql = getDb(env);
 
   const result = await sql`
-    SELECT
-      id,
-      email,
-      mfa_enabled,
-      mfa_secret
-    FROM users
+    UPDATE users
+    SET
+      mfa_enabled = false,
+      mfa_secret = NULL
     WHERE id = ${userId}
+    RETURNING id, email, mfa_enabled
   `;
 
   return result[0];

@@ -1,11 +1,20 @@
 import {
+  getMfaStatus,
   setupMfa,
   enableMfa,
+  disableMfa,
   verifyMfaLogin,
 } from "../controllers/mfaController";
 
 export async function handleMfaRoutes(request, env) {
   const url = new URL(request.url);
+
+  if (
+    request.method === "GET" &&
+    url.pathname === "/api/mfa/status"
+  ) {
+    return getMfaStatus(env, request);
+  }
 
   if (
     request.method === "GET" &&
@@ -19,6 +28,13 @@ export async function handleMfaRoutes(request, env) {
     url.pathname === "/api/mfa/enable"
   ) {
     return enableMfa(env, request);
+  }
+
+  if (
+    request.method === "POST" &&
+    url.pathname === "/api/mfa/disable"
+  ) {
+    return disableMfa(env, request);
   }
 
   if (

@@ -303,6 +303,12 @@ function Profile() {
 >
   🏛️ Open Compliance Center
 </Link>
+<Link
+  to="/mfa-settings"
+  className="inline-flex items-center rounded-xl bg-purple-600 px-5 py-3 text-sm font-bold text-white hover:bg-purple-700"
+>
+  🔐 Manage MFA
+</Link>
     </section>
   );
 }

@@ -6,12 +6,24 @@ import {
   generateOtpAuthUrl,
   saveMfaSecret,
   enableMfaForUser,
+  disableMfaForUser,
   getUserMfaDetails,
   verifyMfaCode,
 } from "../services/mfaService";
 
 import { loginUser } from "../services/authService";
 import { generateToken } from "../utils/jwt";
+
+export async function getMfaStatus(env, request) {
+  const user = await getAuthenticatedUser(request, env);
+
+  const mfaUser = await getUserMfaDetails(env, user.id);
+
+  return Response.json({
+    success: true,
+    mfa_enabled: Boolean(mfaUser?.mfa_enabled),
+  });
+}
 
 export async function setupMfa(env, request) {
   const user = await getAuthenticatedUser(request, env);
@@ -27,9 +39,7 @@ export async function setupMfa(env, request) {
     action: "MFA_SETUP_STARTED",
     targetType: "user",
     targetId: user.id,
-    metadata: {
-      email: user.email,
-    },
+    metadata: { email: user.email },
   });
 
   return Response.json({
@@ -51,16 +61,11 @@ export async function enableMfa(env, request) {
         success: false,
         message: "MFA setup not started",
       },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 
-  const valid = await verifyMfaCode(
-    mfaUser.mfa_secret,
-    body.code
-  );
+  const valid = await verifyMfaCode(mfaUser.mfa_secret, body.code);
 
   if (!valid) {
     return Response.json(
@@ -68,9 +73,7 @@ export async function enableMfa(env, request) {
         success: false,
         message: "Invalid MFA code",
       },
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 
@@ -81,9 +84,51 @@ export async function enableMfa(env, request) {
     action: "MFA_ENABLED",
     targetType: "user",
     targetId: user.id,
-    metadata: {
-      email: user.email,
-    },
+    metadata: { email: user.email },
+  });
+
+  return Response.json({
+    success: true,
+    user: updatedUser,
+  });
+}
+
+export async function disableMfa(env, request) {
+  const user = await getAuthenticatedUser(request, env);
+  const body = await request.json();
+
+  const mfaUser = await getUserMfaDetails(env, user.id);
+
+  if (!mfaUser?.mfa_enabled || !mfaUser?.mfa_secret) {
+    return Response.json(
+      {
+        success: false,
+        message: "MFA is not enabled",
+      },
+      { status: 400 }
+    );
+  }
+
+  const valid = await verifyMfaCode(mfaUser.mfa_secret, body.code);
+
+  if (!valid) {
+    return Response.json(
+      {
+        success: false,
+        message: "Invalid MFA code",
+      },
+      { status: 400 }
+    );
+  }
+
+  const updatedUser = await disableMfaForUser(env, user.id);
+
+  await createAuditLog(env, {
+    actorUserId: user.id,
+    action: "MFA_DISABLED",
+    targetType: "user",
+    targetId: user.id,
+    metadata: { email: user.email },
   });
 
   return Response.json({
@@ -96,11 +141,7 @@ export async function verifyMfaLogin(env, request) {
   try {
     const body = await request.json();
 
-    const user = await loginUser(
-      env,
-      body.email,
-      body.password
-    );
+    const user = await loginUser(env, body.email, body.password);
 
     if (!user.mfa_enabled) {
       return Response.json(
@@ -108,16 +149,11 @@ export async function verifyMfaLogin(env, request) {
           success: false,
           message: "MFA is not enabled for this user",
         },
-        {
-          status: 400,
-        }
+        { status: 400 }
       );
     }
 
-    const valid = await verifyMfaCode(
-      user.mfa_secret,
-      body.code
-    );
+    const valid = await verifyMfaCode(user.mfa_secret, body.code);
 
     if (!valid) {
       await createAuditLog(env, {
@@ -125,9 +161,7 @@ export async function verifyMfaLogin(env, request) {
         action: "MFA_LOGIN_FAILED",
         targetType: "user",
         targetId: user.id,
-        metadata: {
-          email: user.email,
-        },
+        metadata: { email: user.email },
       });
 
       return Response.json(
@@ -135,9 +169,7 @@ export async function verifyMfaLogin(env, request) {
           success: false,
           message: "Invalid MFA code",
         },
-        {
-          status: 401,
-        }
+        { status: 401 }
       );
     }
 
@@ -146,9 +178,7 @@ export async function verifyMfaLogin(env, request) {
       action: "MFA_LOGIN_SUCCESS",
       targetType: "user",
       targetId: user.id,
-      metadata: {
-        email: user.email,
-      },
+      metadata: { email: user.email },
     });
 
     const token = await generateToken(user, env);
@@ -171,9 +201,7 @@ export async function verifyMfaLogin(env, request) {
         success: false,
         message: error.message,
       },
-      {
-        status: 401,
-      }
+      { status: 401 }
     );
   }
 }
