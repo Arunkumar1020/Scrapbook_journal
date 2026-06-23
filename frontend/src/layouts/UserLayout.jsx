@@ -53,6 +53,9 @@ function UserLayout() {
             <NavLink to="/profile" className={navClass}>
             👤 Profile
             </NavLink>
+            <NavLink to="/privacy-requests" className={navClass}>
+  📝 Privacy Requests
+</NavLink>
             <NavLink to="/mfa-settings" className={navClass}>
   🔐 MFA
 </NavLink>

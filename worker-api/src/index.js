@@ -12,7 +12,7 @@ import {
   getMyCookieConsent,
   updateMyCookieConsent,
 } from "./controllers/userController";
-
+import { handlePrivacyRequestRoutes } from "./routes/privacyRequestRoutes";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -193,6 +193,9 @@ export default {
       const journalResponse = await handleJournalRoutes(request, env);
       if (journalResponse) return withCors(journalResponse);
 
+      const privacyRequestResponse =await handlePrivacyRequestRoutes(request, env);
+      if (privacyRequestResponse) {return withCors(privacyRequestResponse);}
+      
       const adminResponse = await handleAdminRoutes(request, env);
       if (adminResponse) return withCors(adminResponse);
 
