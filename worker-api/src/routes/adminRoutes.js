@@ -6,6 +6,7 @@ import {
   removeUser,
   adminAuditLogs,
   adminSecuritySummary,
+  getComplianceSummaryController
 } from "../controllers/adminController";
 export async function handleAdminRoutes(request, env) {
   const url = new URL(request.url);

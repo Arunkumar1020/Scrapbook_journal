@@ -121,67 +121,29 @@ export async function deleteUser(env, userId) {
 export async function getComplianceSummary(env) {
   const sql = getDb(env);
 
-  const totalUsers = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM users
+  const result = await sql`
+    SELECT
+      (SELECT COUNT(*)::int FROM users) AS total_users,
+      (SELECT COUNT(*)::int FROM users WHERE consent_given = true) AS consent_given,
+      (SELECT COUNT(*)::int FROM users WHERE mfa_enabled = true) AS mfa_enabled,
+      (SELECT COUNT(*)::int FROM audit_logs WHERE action = 'DATA_EXPORTED') AS data_exports,
+      (SELECT COUNT(*)::int FROM audit_logs WHERE action IN ('ACCOUNT_DELETED', 'USER_DELETED_BY_ADMIN')) AS account_deletes,
+      (SELECT COUNT(*)::int FROM audit_logs WHERE action = 'FAILED_LOGIN') AS failed_logins,
+      (SELECT COUNT(*)::int FROM audit_logs WHERE action = 'MFA_LOGIN_FAILED') AS mfa_failures,
+      (SELECT COUNT(*)::int FROM audit_logs WHERE action = 'USER_ROLE_UPDATED') AS role_changes
   `;
 
-  const consentGiven = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM users
-    WHERE consent_given = true
-  `;
-
-  const mfaEnabled = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM users
-    WHERE mfa_enabled = true
-  `;
-
-  const dataExports = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM audit_logs
-    WHERE action = 'DATA_EXPORTED'
-  `;
-
-  const accountDeletes = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM audit_logs
-    WHERE action IN (
-      'ACCOUNT_DELETED',
-      'USER_DELETED_BY_ADMIN'
-    )
-  `;
-
-  const failedLogins = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM audit_logs
-    WHERE action = 'FAILED_LOGIN'
-  `;
-
-  const mfaFailures = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM audit_logs
-    WHERE action = 'MFA_LOGIN_FAILED'
-  `;
-
-  const roleChanges = await sql`
-    SELECT COUNT(*)::int AS count
-    FROM audit_logs
-    WHERE action = 'USER_ROLE_UPDATED'
-  `;
+  const row = result[0];
 
   return {
-    totalUsers: totalUsers[0].count,
-    consentGiven: consentGiven[0].count,
-    consentMissing:
-      totalUsers[0].count -
-      consentGiven[0].count,
-    mfaEnabled: mfaEnabled[0].count,
-    dataExports: dataExports[0].count,
-    accountDeletes: accountDeletes[0].count,
-    failedLogins: failedLogins[0].count,
-    mfaFailures: mfaFailures[0].count,
-    roleChanges: roleChanges[0].count,
+    totalUsers: row.total_users || 0,
+    consentGiven: row.consent_given || 0,
+    consentMissing: (row.total_users || 0) - (row.consent_given || 0),
+    mfaEnabled: row.mfa_enabled || 0,
+    dataExports: row.data_exports || 0,
+    accountDeletes: row.account_deletes || 0,
+    failedLogins: row.failed_logins || 0,
+    mfaFailures: row.mfa_failures || 0,
+    roleChanges: row.role_changes || 0,
   };
 }

@@ -4,6 +4,7 @@ import {
   getAdminJournals,
   updateUserRole,
   deleteUser,
+  getComplianceSummary,
 } from "../services/adminService";
 import { createAuditLog } from "../services/auditService";
 import { getAuthenticatedUser } from "../middleware/authMiddleware";

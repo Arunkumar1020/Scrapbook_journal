@@ -13,6 +13,9 @@ import {
   updateMyCookieConsent,
 } from "./controllers/userController";
 import { handlePrivacyRequestRoutes } from "./routes/privacyRequestRoutes";
+import { handlePrivacyAnalyticsRoutes } from "./routes/privacyAnalyticsRoutes";
+import { handleBreachRoutes } from "./routes/breachRoutes";
+import { handleVendorRoutes } from "./routes/vendorRoutes";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -197,6 +200,15 @@ export default {
       const privacyRequestResponse =await handlePrivacyRequestRoutes(request, env);
       if (privacyRequestResponse) {return withCors(privacyRequestResponse);}
       
+      const privacyAnalyticsResponse = await handlePrivacyAnalyticsRoutes(request, env);
+      if (privacyAnalyticsResponse) { return withCors(privacyAnalyticsResponse);}
+      
+      const breachResponse = await handleBreachRoutes(request, env);
+      if (breachResponse) { return withCors(breachResponse);}
+
+      const vendorResponse = await handleVendorRoutes(request, env);
+      if (vendorResponse) { return withCors(vendorResponse);}
+
       const adminResponse = await handleAdminRoutes(request, env);
       if (adminResponse) return withCors(adminResponse);
 

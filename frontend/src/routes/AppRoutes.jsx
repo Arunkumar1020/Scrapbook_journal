@@ -29,7 +29,8 @@ import SecurityPolicy from "../pages/legal/SecurityPolicy";
 import TermsAndConditions from "../pages/legal/TermsAndConditions";
 import ComplianceCenter from "../pages/legal/ComplianceCenter";
 import CookiePolicy from "../pages/legal/CookiePolicy";
-
+import BreachManagement from "../pages/admin/BreachManagement";
+import VendorManagement from "../pages/admin/VendorManagement";
 function AppRoutes() {
   return (
     <Routes>
@@ -75,6 +76,8 @@ function AppRoutes() {
         <Route path="journals" element={<JournalManagement />} />
         <Route path="privacy-requests" element={<PrivacyRequestsAdmin />} />
         <Route path="retention" element={<RetentionManagement />} />
+        <Route path="breaches" element={<BreachManagement />} />
+        <Route path="vendors" element={<VendorManagement />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

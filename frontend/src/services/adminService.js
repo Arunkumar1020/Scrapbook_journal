@@ -71,6 +71,36 @@ export async function getAdminSecuritySummary() {
   return response.json();
 }
 
+export async function getComplianceSummary() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/compliance-summary`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load compliance summary");
+  }
+
+  return response.json();
+}
+
+export async function getPrivacyAnalytics() {
+  const response = await fetch(
+    `${API_BASE_URL}/api/admin/privacy-analytics`,
+    {
+      headers: getAuthHeaders(),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to load privacy analytics");
+  }
+
+  return response.json();
+}
+
 export async function updateAdminUserRole(userId, role) {
   const response = await fetch(
     `${API_BASE_URL}/api/admin/users/${userId}`,
@@ -102,22 +132,6 @@ export async function deleteAdminUser(userId) {
 
   if (!response.ok) {
     throw new Error("Failed to delete user");
-  }
-
-  return response.json();
-}
-export async function getComplianceSummary() {
-  const response = await fetch(
-    `${API_BASE_URL}/api/admin/compliance-summary`,
-    {
-      headers: getAuthHeaders(),
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(
-      "Failed to load compliance summary"
-    );
   }
 
   return response.json();
