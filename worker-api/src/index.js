@@ -16,6 +16,8 @@ import { handlePrivacyRequestRoutes } from "./routes/privacyRequestRoutes";
 import { handlePrivacyAnalyticsRoutes } from "./routes/privacyAnalyticsRoutes";
 import { handleBreachRoutes } from "./routes/breachRoutes";
 import { handleVendorRoutes } from "./routes/vendorRoutes";
+import { handlePrivacyContactRoutes } from "./routes/privacyContactRoutes";
+import { handleBackupRoutes } from "./routes/backupRoutes";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -208,6 +210,12 @@ export default {
 
       const vendorResponse = await handleVendorRoutes(request, env);
       if (vendorResponse) { return withCors(vendorResponse);}
+
+      const privacyContactResponse =  await handlePrivacyContactRoutes(request, env);
+      if (privacyContactResponse) {  return withCors(privacyContactResponse);}
+
+      const backupResponse = await handleBackupRoutes(request, env);
+      if (backupResponse) {  return withCors(backupResponse);}
 
       const adminResponse = await handleAdminRoutes(request, env);
       if (adminResponse) return withCors(adminResponse);

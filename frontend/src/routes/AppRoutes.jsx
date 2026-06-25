@@ -31,6 +31,8 @@ import ComplianceCenter from "../pages/legal/ComplianceCenter";
 import CookiePolicy from "../pages/legal/CookiePolicy";
 import BreachManagement from "../pages/admin/BreachManagement";
 import VendorManagement from "../pages/admin/VendorManagement";
+import PrivacyContactManagement from "../pages/admin/PrivacyContactManagement";
+import BackupManagement from "../pages/admin/BackupManagement";
 function AppRoutes() {
   return (
     <Routes>
@@ -78,6 +80,8 @@ function AppRoutes() {
         <Route path="retention" element={<RetentionManagement />} />
         <Route path="breaches" element={<BreachManagement />} />
         <Route path="vendors" element={<VendorManagement />} />
+        <Route path="privacy-contacts" element={<PrivacyContactManagement />} />
+        <Route path="backups" element={<BackupManagement />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />
